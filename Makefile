@@ -6,7 +6,7 @@
 #    By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/13 14:31:55 by sgoffaux          #+#    #+#              #
-#    Updated: 2021/10/13 14:32:58 by sgoffaux         ###   ########.fr        #
+#    Updated: 2021/10/13 15:04:42 by sgoffaux         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,9 @@ CC			=	gcc
 INCLUDE 	=	includes
 CFLAGS		=	-Wall -Wextra -Werror -I$(INCLUDE)
 RM			=	rm -f
-SRCS		=	main.c
+SRCS		=	main.c \
+				utils.c \
+				parse_map.c \
 
 OBJS		=	$(SRCS:%.c=%.o)
 
