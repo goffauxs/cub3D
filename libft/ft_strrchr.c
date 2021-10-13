@@ -1,18 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:05 by sgoffaux         ###   ########.fr       */
+/*   Created: 2021/04/02 10:50:45 by sgoffaux          #+#    #+#             */
+/*   Updated: 2021/04/06 11:28:53 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "libft.h"
 
-int main()
+char	*ft_strrchr(const char *s, int c)
 {
-	printf("test\n");
+	int	i;
+
+	i = ft_strlen(s);
+	while (i >= 0)
+	{
+		if (s[i] == (char)c)
+			return ((char *)s + i);
+		i--;
+	}
+	return (NULL);
 }

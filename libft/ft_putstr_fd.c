@@ -1,18 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:05 by sgoffaux         ###   ########.fr       */
+/*   Created: 2021/04/05 14:08:48 by sgoffaux          #+#    #+#             */
+/*   Updated: 2021/07/01 14:44:17 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include <unistd.h>
 
-int main()
+void	ft_putstr_fd(const char *s, int fd)
 {
-	printf("test\n");
+	if (s && fd >= 0)
+		while (*s != '\0')
+			write(fd, s++, 1);
 }

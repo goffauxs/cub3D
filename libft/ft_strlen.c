@@ -1,18 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:05 by sgoffaux         ###   ########.fr       */
+/*   Created: 2021/04/01 10:47:03 by sgoffaux          #+#    #+#             */
+/*   Updated: 2021/07/01 14:38:47 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include <stddef.h>
 
-int main()
+size_t	ft_strlen(const char *s)
 {
-	printf("test\n");
+	size_t	i;
+
+	i = 0;
+	while (s && s[i] != '\0')
+		i++;
+	return (i);
 }

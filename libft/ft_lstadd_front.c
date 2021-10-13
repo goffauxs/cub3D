@@ -1,18 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:05 by sgoffaux         ###   ########.fr       */
+/*   Created: 2021/04/07 16:39:03 by sgoffaux          #+#    #+#             */
+/*   Updated: 2021/04/07 16:43:10 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "libft.h"
 
-int main()
+void	ft_lstadd_front(t_list **lst, t_list *new)
 {
-	printf("test\n");
+	if (lst && new)
+	{
+		new->next = *lst;
+		*lst = new;
+	}
 }

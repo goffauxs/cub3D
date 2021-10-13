@@ -1,18 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_lstsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:05 by sgoffaux         ###   ########.fr       */
+/*   Created: 2021/04/07 16:44:05 by sgoffaux          #+#    #+#             */
+/*   Updated: 2021/04/07 16:52:13 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "libft.h"
 
-int main()
+int	ft_lstsize(t_list *lst)
 {
-	printf("test\n");
+	int		i;
+	t_list	*tmp;
+
+	tmp = lst;
+	i = 0;
+	while (tmp)
+	{
+		tmp = tmp->next;
+		i++;
+	}
+	return (i);
 }

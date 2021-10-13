@@ -1,18 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_lstiter.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:05 by sgoffaux         ###   ########.fr       */
+/*   Created: 2021/04/07 17:26:34 by sgoffaux          #+#    #+#             */
+/*   Updated: 2021/05/06 16:30:15 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "libft.h"
 
-int main()
+void	ft_lstiter(t_list *lst, void (*f)(void *))
 {
-	printf("test\n");
+	t_list	*tmp;
+
+	while (lst)
+	{
+		tmp = lst->next;
+		(*f)(lst->content);
+		lst = tmp;
+	}
 }

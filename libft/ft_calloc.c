@@ -1,18 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:05 by sgoffaux         ###   ########.fr       */
+/*   Created: 2021/04/02 11:53:25 by sgoffaux          #+#    #+#             */
+/*   Updated: 2021/05/06 16:45:03 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "libft.h"
 
-int main()
+void	*ft_calloc(size_t nmemb, size_t size)
 {
-	printf("test\n");
+	void	*ret;
+
+	ret = malloc(nmemb * size);
+	if (!ret)
+		return (NULL);
+	ft_bzero(ret, nmemb * size);
+	return (ret);
 }

@@ -1,18 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_lstlast.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:05 by sgoffaux         ###   ########.fr       */
+/*   Created: 2021/04/07 16:48:42 by sgoffaux          #+#    #+#             */
+/*   Updated: 2021/05/06 16:20:01 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3D.h"
+#include "libft.h"
 
-int main()
+t_list	*ft_lstlast(t_list *lst)
 {
-	printf("test\n");
+	t_list	*tmp;
+
+	if (!lst)
+		return (NULL);
+	tmp = lst;
+	while (tmp->next)
+	{
+		tmp = tmp->next;
+	}
+	return (tmp);
 }
