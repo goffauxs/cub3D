@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:50:36 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 15:08:45 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/14 11:21:52 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ static size_t	ft_get_width(char *filename)
 {
 	int		fd;
 	char	*line;
-	int		ret;
 	size_t	len;
 	
 	fd = open(filename, O_RDONLY);
@@ -48,15 +47,6 @@ static size_t	ft_get_width(char *filename)
 	if (!*line)
 		ft_return_error("invalid map (empty)", 0);
 	len = ft_strlen(line);
-	ret = 1;
-	while (ret && ret != -1)
-	{
-		ret = get_next_line(fd, &line);
-		if (ft_strlen(line) != len)
-			ft_return_error("invalid map (irregular width)", 0);
-		if (ret == 0)
-			break ;
-	}
 	while (get_next_line(fd, &line))
 		free(line);
 	free(line);
