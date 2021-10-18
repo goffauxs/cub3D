@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:50:36 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/14 11:21:52 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/18 10:14:48 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ static size_t	ft_get_height(char *filename)
 
 	count = 1;
 	fd = open(filename, O_RDONLY);
+	if (!fd)
+		return (0);
 	while (get_next_line(fd, &line) == 1)
 	{
 		count++;
@@ -80,5 +82,7 @@ int	ft_check_valid(char *filename, t_map *map)
 	{
 		return (ft_fill_array(filename, map));
 	}
+	else
+		ft_putendl_fd("map error", 2);
 	return (0);
 }

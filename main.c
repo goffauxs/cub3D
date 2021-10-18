@@ -6,13 +6,13 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/14 15:01:37 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/18 12:06:24 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
 
-#define TILE_SIZE 192
+#define TILE_SIZE 32
 #define KEY_ESC 53
 #define ARROW_LEFT 123
 #define ARROW_RIGHT 124
@@ -20,6 +20,7 @@
 #define A 0
 #define S 1
 #define D 2
+#define ONE_DEG 0.0174533
 
 static void	ft_swap(float *a, float *b)
 {
@@ -161,80 +162,84 @@ static void ft_draw(t_cub3d *env)
 			}
 		}
 	}
-	t_vf2d new_pos = {env->player.pos.x * TILE_SIZE, env->player.pos.y * TILE_SIZE};
-	t_vf2d delta = {(env->player.pos.x + env->player.delta.x * 10) * TILE_SIZE, (env->player.pos.y + env->player.delta.y * 10) * TILE_SIZE};
-	t_vf2d ray_dir = env->player.delta;
-	t_vf2d ray_unit_step_size = {sqrt(1 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)), sqrt(1 + (ray_dir.x / ray_dir.y) * (ray_dir.x / ray_dir.y))};
-	t_vf2d ray_start = env->player.pos;
-	t_vi2d map_check;
-	map_check.x = (int)ray_start.x;
-	map_check.y = (int)ray_start.y;
-	t_vf2d ray_len;
-	t_vi2d step;
+	for (int i = -40; i < 40; i++)
+	{
+		t_vf2d new_pos = {env->player.pos.x * TILE_SIZE, env->player.pos.y * TILE_SIZE};
+		t_vf2d ray_dir = {(float)cos(env->player.angle + (i * ONE_DEG)), (float)sin(env->player.angle + (i * ONE_DEG))};
+		t_vf2d ray_unit_step_size = {sqrt(1 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)), sqrt(1 + (ray_dir.x / ray_dir.y) * (ray_dir.x / ray_dir.y))};
+		t_vf2d ray_start = env->player.pos;
+		t_vi2d map_check;
+		map_check.x = (int)ray_start.x;
+		map_check.y = (int)ray_start.y;
+		t_vf2d ray_len;
+		t_vi2d step;
 
-	printf("ray_dir: (%02.2f, %02.2f)\n", ray_dir.x, ray_dir.y);
-	if (ray_dir.x < 0)
-	{
-		step.x = -1;
-		ray_len.x = (ray_start.x - (float)map_check.x) * ray_unit_step_size.x;
-	}
-	else
-	{
-		step.x = 1;
-		ray_len.x = ((float)(map_check.x + 1) - ray_start.x) * ray_unit_step_size.x;
-	}
-	if (ray_dir.y < 0)
-	{
-		step.y = -1;
-		ray_len.y = (ray_start.y - (float)map_check.y) * ray_unit_step_size.y;
-	}
-	else
-	{
-		step.y = 1;
-		ray_len.y = ((float)(map_check.y + 1) - ray_start.y) * ray_unit_step_size.x;
-	}
-
-	printf("ray_len: (%02.2f, %02.2f)\n", ray_len.x, ray_len.y);
-	int b_tile_found = 0;
-	float max_dist = 100.f;
-	float dist = 0.f;
-	while (!b_tile_found && dist < max_dist)
-	{
-		if (ray_len.x < ray_len.y)
+		if (ray_dir.x < 0)
 		{
-			map_check.x += step.x;
-			dist = ray_len.x;
-			ray_len.x += ray_unit_step_size.x;
+			step.x = -1;
+			ray_len.x = (ray_start.x - (float)map_check.x) * ray_unit_step_size.x;
 		}
 		else
 		{
-			map_check.y += step.y;
-			dist = ray_len.y;
-			ray_len.y += ray_unit_step_size.y;
+			step.x = 1;
+			ray_len.x = ((float)(map_check.x + 1) - ray_start.x) * ray_unit_step_size.x;
 		}
-		if (map_check.x >= 0 && map_check.x < env->map->width && map_check.y >= 0 && map_check.y < env->map->height)
+		if (ray_dir.y < 0)
 		{
-			if (env->map->array[map_check.y][map_check.x] == '1')
-				b_tile_found = 1;
+			step.y = -1;
+			ray_len.y = (ray_start.y - (float)map_check.y) * ray_unit_step_size.y;
 		}
-	}
+		else
+		{
+			step.y = 1;
+			ray_len.y = ((float)(map_check.y + 1) - ray_start.y) * ray_unit_step_size.y;
+		}
 
-	t_vf2d intersection;
-	if (b_tile_found)
-	{
-		intersection.x = ray_dir.x * dist + ray_start.x;
-		intersection.y = ray_dir.y * dist + ray_start.y;
-	}
-	printf("intersection: (%02.2f, %02.2f)\n", intersection.x, intersection.y);
-	// printf("pos: (%02.2f, %02.2f)\n", new_pos.x, new_pos.y);
-	// printf("delta: (%02.2f, %02.2f)\n", delta.x, delta.y);
-	ft_draw_line(new_pos, delta, env);
-	for (int y = -5; y < 5; y++)
-	{
-		for (int x = -5; x < 5; x++)
+		int b_tile_found = 0;
+		float max_dist = 100.f;
+		float dist = 0.f;
+		while (!b_tile_found && dist < max_dist)
 		{
-			ft_put_pixel(env, (intersection.x * TILE_SIZE) + x, (intersection.y * TILE_SIZE) + y, 0x00FF00);
+			if (ray_len.x < ray_len.y)
+			{
+				map_check.x += step.x;
+				dist = ray_len.x;
+				ray_len.x += ray_unit_step_size.x;
+			}
+			else
+			{
+				map_check.y += step.y;
+				dist = ray_len.y;
+				ray_len.y += ray_unit_step_size.y;
+			}
+			if (map_check.x >= 0 && map_check.x < env->map->width && map_check.y >= 0 && map_check.y < env->map->height)
+			{
+				if (env->map->array[map_check.y][map_check.x] == '1')
+					b_tile_found = 1;
+			}
 		}
+
+		t_vf2d intersection;
+		if (b_tile_found)
+		{
+			intersection.x = ray_dir.x * dist + ray_start.x;
+			intersection.y = ray_dir.y * dist + ray_start.y;
+		}
+		t_vf2d delta = {intersection.x * TILE_SIZE, intersection.y * TILE_SIZE};
+		float len = sqrt((intersection.x - env->player.pos.x) * (intersection.x - env->player.pos.x) + (intersection.y - env->player.pos.y) * (intersection.y - env->player.pos.y));
+		float ca = i * ONE_DEG;
+		if (ca < 0)
+			ca += 2 * M_PI;
+		if (ca > 2 * M_PI)
+			ca -= 2 * M_PI;
+		len = len * cos(ca);
+		for (int j = 0; j < 8; j++)
+		{
+			t_vf2d bottom = {(float)((i + 40) * 8 + j + WIDTH / 2), (float)(HEIGHT / 2 + (HEIGHT / len) / 2)};
+			t_vf2d top = {bottom.x, (float)(HEIGHT / 2 - (HEIGHT / len) / 2)};
+			ft_draw_line(bottom, top, env);
+		}
+		ft_draw_line(new_pos, delta, env);
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 }
@@ -285,9 +290,8 @@ int main(int argc, char **argv)
 		exit(1);
 	env.mlx = mlx_init();
 	env.win = mlx_new_window(env.mlx, WIDTH, HEIGHT, "cub3D");
-	mlx_do_key_autorepeaton(env.mlx);
 	mlx_hook(env.win, 17, 0, close_win, NULL);
-	mlx_key_hook(env.win, key_hook, &env);
+	mlx_hook(env.win, 2, 0, key_hook, &env);
 	ft_check_valid(argv[1], &map);
 	env.img = mlx_new_image(env.mlx, WIDTH, HEIGHT);
 	if (!env.img)
