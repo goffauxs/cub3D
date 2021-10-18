@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/14 14:34:01 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/18 13:47:19 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ typedef struct	s_map
 	char	**array;
 }				t_map;
 
-typedef struct	s_vf2d
+typedef struct	s_vd2d
 {
-	float	x;
-	float	y;
-}				t_vf2d;
+	double	x;
+	double	y;
+}				t_vd2d;
 
 typedef struct	s_vi2d
 {
@@ -46,8 +46,8 @@ typedef struct	s_vi2d
 
 typedef struct	s_player
 {
-	t_vf2d	pos;
-	t_vf2d	delta;
+	t_vd2d	pos;
+	t_vd2d	delta;
 	float	angle;
 }				t_player;
 

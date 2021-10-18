@@ -6,13 +6,13 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/18 12:06:24 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/18 16:37:34 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
 
-#define TILE_SIZE 32
+#define TILE_SIZE 8
 #define KEY_ESC 53
 #define ARROW_LEFT 123
 #define ARROW_RIGHT 124
@@ -20,39 +20,27 @@
 #define A 0
 #define S 1
 #define D 2
-#define ONE_DEG 0.0174533
+#define DR 0.0005454153912
 
-static void	ft_swap(float *a, float *b)
+static void	ft_swap(double *a, double *b)
 {
-	float	tmp;
+	double	tmp;
 
 	tmp = *a;
 	*a = *b;
 	*b = tmp;
 }
 
-static float	ft_abs(float n)
+static double	ft_abs(double n)
 {
 	if (n < 0)
 		return (-n);
 	return (n);
 }
 
-static int	ft_ipart(float n)
+static int	ft_ipart(double n)
 {
 	return ((int)n);
-}
-
-static float	ft_fpart(float n)
-{
-	if (n > 0.f)
-		return (n - ft_ipart(n));
-	return (n - (ft_ipart(n) + 1.f));
-}
-
-static float	ft_rfpart(float n)
-{
-	return (1.f - ft_fpart(n));
 }
 
 static int	close_win(void *param)
@@ -74,53 +62,35 @@ static void	ft_put_pixel(t_cub3d *env, int x, int y, int color)
 	}
 }
 
-static int	ft_get_color(float factor)
+static void	ft_draw_line_loop(t_vd2d s, t_vd2d e, double gradient, t_cub3d *env, int color)
 {
-	int		r = 0xFF;
-	int		g = 0xFF;
-	int		b = 0x00;
-	int		alpha;
-
-	alpha = factor * 256;
-	// r *= factor;
-	// g *= factor;
-	// b *= factor;
-	return ((alpha << 24) | (r << 16) | (g << 8) | b);
-}
-
-static void	ft_draw_line_loop(t_vf2d s, t_vf2d e, float gradient, t_cub3d *env)
-{
-	float	inter_y;
+	double	inter_y;
 	int		x;
 
-	inter_y = (float)s.y;
+	inter_y = (double)s.y;
 	x = s.x;
 	while (x <= e.x)
 	{
 		if (env->steep)
 		{
-			ft_put_pixel(env, ft_ipart(inter_y), x,
-				ft_get_color(ft_rfpart(inter_y)));
-			ft_put_pixel(env, ft_ipart(inter_y) + 1, x,
-				ft_get_color(ft_fpart(inter_y)));
+			ft_put_pixel(env, ft_ipart(inter_y), x, color);
+			ft_put_pixel(env, ft_ipart(inter_y) + 1, x, color);
 		}
 		else
 		{
-			ft_put_pixel(env, x, ft_ipart(inter_y),
-				ft_get_color(ft_rfpart(inter_y)));
-			ft_put_pixel(env, x, ft_ipart(inter_y) + 1,
-				ft_get_color(ft_fpart(inter_y)));
+			ft_put_pixel(env, x, ft_ipart(inter_y), color);
+			ft_put_pixel(env, x, ft_ipart(inter_y) + 1, color);
 		}
 		inter_y += gradient;
 		x++;
 	}
 }
 
-static void	ft_draw_line(t_vf2d s, t_vf2d e, t_cub3d *env)
+static void	ft_draw_line(t_vd2d s, t_vd2d e, t_cub3d *env, int color)
 {
-	float	dy;
-	float	dx;
-	float	gradient;
+	double	dy;
+	double	dx;
+	double	gradient;
 
 	env->steep = ft_abs(e.y - s.y) > ft_abs(e.x - s.x);
 	if (env->steep)
@@ -133,17 +103,99 @@ static void	ft_draw_line(t_vf2d s, t_vf2d e, t_cub3d *env)
 		ft_swap(&s.x, &e.x);
 		ft_swap(&s.y, &e.y);
 	}
-	dx = (float)(e.x - s.x);
-	dy = (float)(e.y - s.y);
+	dx = (double)(e.x - s.x);
+	dy = (double)(e.y - s.y);
 	gradient = dy / dx;
-	if (dx == 0.0f)
-		gradient = 1.f;
-	ft_draw_line_loop(s, e, gradient, env);
+	if (dx == 0.0)
+		gradient = 1.0;
+	ft_draw_line_loop(s, e, gradient, env, color);
 }
 
 static void ft_draw(t_cub3d *env)
 {
 	ft_bzero(env->data_addr, WIDTH * HEIGHT * (env->bpp / 8));
+	for (int i = -960; i < 960; i++)
+	{
+		t_vd2d new_pos = {env->player.pos.x * TILE_SIZE, env->player.pos.y * TILE_SIZE};
+		t_vd2d ray_dir = {(double)cos(env->player.angle + (i * DR)), (double)sin(env->player.angle + (i * DR))};
+		t_vd2d ray_unit_step_size = {sqrt(1.0 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)), sqrt(1.0 + (ray_dir.x / ray_dir.y) * (ray_dir.x / ray_dir.y))};
+		t_vd2d ray_start = env->player.pos;
+		t_vi2d map_check;
+		map_check.x = (int)ray_start.x;
+		map_check.y = (int)ray_start.y;
+		t_vd2d ray_len;
+		t_vi2d step;
+
+		if (ray_dir.x < 0)
+		{
+			step.x = -1;
+			ray_len.x = (ray_start.x - (double)map_check.x) * ray_unit_step_size.x;
+		}
+		else
+		{
+			step.x = 1;
+			ray_len.x = ((double)(map_check.x + 1) - ray_start.x) * ray_unit_step_size.x;
+		}
+		if (ray_dir.y < 0)
+		{
+			step.y = -1;
+			ray_len.y = (ray_start.y - (double)map_check.y) * ray_unit_step_size.y;
+		}
+		else
+		{
+			step.y = 1;
+			ray_len.y = ((double)(map_check.y + 1) - ray_start.y) * ray_unit_step_size.y;
+		}
+
+		int b_tile_found = 0;
+		int	vertical = 0;
+		double max_dist = 100.0;
+		double dist = 0.0;
+		while (!b_tile_found && dist < max_dist)
+		{
+			if (ray_len.x < ray_len.y)
+			{
+				map_check.x += step.x;
+				dist = ray_len.x;
+				vertical = 1;
+				ray_len.x += ray_unit_step_size.x;
+			}
+			else
+			{
+				map_check.y += step.y;
+				dist = ray_len.y;
+				vertical = 0;
+				ray_len.y += ray_unit_step_size.y;
+			}
+			if (map_check.x >= 0 && map_check.x < env->map->width && map_check.y >= 0 && map_check.y < env->map->height)
+			{
+				if (env->map->array[map_check.y][map_check.x] == '1')
+					b_tile_found = 1;
+			}
+		}
+
+		t_vd2d intersection;
+		if (b_tile_found)
+		{
+			intersection.x = ray_dir.x * dist + ray_start.x;
+			intersection.y = ray_dir.y * dist + ray_start.y;
+		}
+		t_vd2d delta = {intersection.x * TILE_SIZE, intersection.y * TILE_SIZE};
+		double len = sqrt((intersection.x - env->player.pos.x) * (intersection.x - env->player.pos.x) + (intersection.y - env->player.pos.y) * (intersection.y - env->player.pos.y));
+		double ca = i * DR;
+		if (ca < 0.0)
+			ca += 2.0 * M_PI;
+		if (ca > 2.0 * M_PI)
+			ca -= 2.0 * M_PI;
+		len = len * cos(ca);
+		t_vd2d bottom = {(double)(i + 960), (double)(HEIGHT / 2.0 + ((double)HEIGHT / len) / 2)};
+		t_vd2d top = {bottom.x, (double)(HEIGHT / 2.0 - ((double)HEIGHT / len) / 2)};
+		if (vertical)
+			ft_draw_line(bottom, top, env, 0xFFFF00);
+		else
+			ft_draw_line(bottom, top, env, 0xB5B500);
+		ft_draw_line(new_pos, delta, env, 0xFFFF00);
+	}
 	for (int y = 0; y < env->map->height; y++)
 	{
 		for (int x = 0; x < env->map->width; x++)
@@ -154,92 +206,13 @@ static void ft_draw(t_cub3d *env)
 				{
 					if (env->map->array[y][x] == '1')
 						ft_put_pixel(env, (x * TILE_SIZE) + i, (y * TILE_SIZE) + j, 0xFF0000);
-					if (env->map->array[y][x] == '0')
-						ft_put_pixel(env, (x * TILE_SIZE) + i, (y * TILE_SIZE) + j, 0x333333);
+					// if (env->map->array[y][x] == '0')
+					// 	ft_put_pixel(env, (x * TILE_SIZE) + i, (y * TILE_SIZE) + j, 0x333333);
 					if (env->map->array[y][x] == 'N' || env->map->array[y][x] == 'S' || env->map->array[y][x] == 'E' || env->map->array[y][x] == 'W')
 						ft_put_pixel(env, (x * TILE_SIZE) + i, (y * TILE_SIZE) + j, 0x0000FF);
 				}
 			}
 		}
-	}
-	for (int i = -40; i < 40; i++)
-	{
-		t_vf2d new_pos = {env->player.pos.x * TILE_SIZE, env->player.pos.y * TILE_SIZE};
-		t_vf2d ray_dir = {(float)cos(env->player.angle + (i * ONE_DEG)), (float)sin(env->player.angle + (i * ONE_DEG))};
-		t_vf2d ray_unit_step_size = {sqrt(1 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)), sqrt(1 + (ray_dir.x / ray_dir.y) * (ray_dir.x / ray_dir.y))};
-		t_vf2d ray_start = env->player.pos;
-		t_vi2d map_check;
-		map_check.x = (int)ray_start.x;
-		map_check.y = (int)ray_start.y;
-		t_vf2d ray_len;
-		t_vi2d step;
-
-		if (ray_dir.x < 0)
-		{
-			step.x = -1;
-			ray_len.x = (ray_start.x - (float)map_check.x) * ray_unit_step_size.x;
-		}
-		else
-		{
-			step.x = 1;
-			ray_len.x = ((float)(map_check.x + 1) - ray_start.x) * ray_unit_step_size.x;
-		}
-		if (ray_dir.y < 0)
-		{
-			step.y = -1;
-			ray_len.y = (ray_start.y - (float)map_check.y) * ray_unit_step_size.y;
-		}
-		else
-		{
-			step.y = 1;
-			ray_len.y = ((float)(map_check.y + 1) - ray_start.y) * ray_unit_step_size.y;
-		}
-
-		int b_tile_found = 0;
-		float max_dist = 100.f;
-		float dist = 0.f;
-		while (!b_tile_found && dist < max_dist)
-		{
-			if (ray_len.x < ray_len.y)
-			{
-				map_check.x += step.x;
-				dist = ray_len.x;
-				ray_len.x += ray_unit_step_size.x;
-			}
-			else
-			{
-				map_check.y += step.y;
-				dist = ray_len.y;
-				ray_len.y += ray_unit_step_size.y;
-			}
-			if (map_check.x >= 0 && map_check.x < env->map->width && map_check.y >= 0 && map_check.y < env->map->height)
-			{
-				if (env->map->array[map_check.y][map_check.x] == '1')
-					b_tile_found = 1;
-			}
-		}
-
-		t_vf2d intersection;
-		if (b_tile_found)
-		{
-			intersection.x = ray_dir.x * dist + ray_start.x;
-			intersection.y = ray_dir.y * dist + ray_start.y;
-		}
-		t_vf2d delta = {intersection.x * TILE_SIZE, intersection.y * TILE_SIZE};
-		float len = sqrt((intersection.x - env->player.pos.x) * (intersection.x - env->player.pos.x) + (intersection.y - env->player.pos.y) * (intersection.y - env->player.pos.y));
-		float ca = i * ONE_DEG;
-		if (ca < 0)
-			ca += 2 * M_PI;
-		if (ca > 2 * M_PI)
-			ca -= 2 * M_PI;
-		len = len * cos(ca);
-		for (int j = 0; j < 8; j++)
-		{
-			t_vf2d bottom = {(float)((i + 40) * 8 + j + WIDTH / 2), (float)(HEIGHT / 2 + (HEIGHT / len) / 2)};
-			t_vf2d top = {bottom.x, (float)(HEIGHT / 2 - (HEIGHT / len) / 2)};
-			ft_draw_line(bottom, top, env);
-		}
-		ft_draw_line(new_pos, delta, env);
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 }
@@ -253,30 +226,67 @@ int	key_hook(int keycode, void *param)
 		close_win(NULL);
 	else if (keycode == ARROW_LEFT)
 	{
-		env->player.angle -= 0.05f;
-		if (env->player.angle > 2 * M_PI)
-			env->player.angle -= 2 * M_PI;
+		env->player.angle -= 0.05;
+		if (env->player.angle < 0.0)
+			env->player.angle += 2.0 * M_PI;
 		env->player.delta.x = cos(env->player.angle);
 		env->player.delta.y = sin(env->player.angle);
 	}
 	else if (keycode == ARROW_RIGHT)
 	{
-		env->player.angle += 0.05f;
-		if (env->player.angle < 0)
-			env->player.angle += 2 * M_PI;
+		env->player.angle += 0.05;
+		if (env->player.angle > 2.0 * M_PI)
+			env->player.angle -= 2.0 * M_PI;
 		env->player.delta.x = cos(env->player.angle);
 		env->player.delta.y = sin(env->player.angle);
 	}
 	else if (keycode == W)
 	{
-		env->player.pos.x += env->player.delta.x * 0.25f;
-		env->player.pos.y += env->player.delta.y * 0.25f;
+		if (env->map->array[(int)(env->player.pos.y + env->player.delta.y)][(int)env->player.pos.x] != '1')
+			env->player.pos.y += env->player.delta.y * 0.25;
+		if (env->map->array[(int)env->player.pos.y][(int)(env->player.pos.x + env->player.delta.x)] != '1')
+			env->player.pos.x += env->player.delta.x * 0.25;
 	}
 	else if (keycode == S)
 	{
-		env->player.pos.x -= env->player.delta.x * 0.25f;
-		env->player.pos.y -= env->player.delta.y * 0.25f;
+		if (env->map->array[(int)(env->player.pos.y - env->player.delta.y)][(int)env->player.pos.x] != '1')
+			env->player.pos.y -= env->player.delta.y * 0.25;
+		if (env->map->array[(int)env->player.pos.y][(int)(env->player.pos.x - env->player.delta.x)] != '1')
+			env->player.pos.x -= env->player.delta.x * 0.25;
 	}
+	else if (keycode == A)
+	{
+		double angle = env->player.angle + (M_PI / 2.0);
+		if (angle < 0.0)
+			angle += 2.0 * M_PI;
+		if (angle > 2.0 * M_PI)
+			angle -= 2.0 * M_PI;
+		env->player.pos.x += cos(angle) * 0.25;
+		angle = env->player.angle - (M_PI / 2.0);
+		if (angle < 0.0)
+			angle += 2.0 * M_PI;
+		if (angle > 2.0 * M_PI)
+			angle -= 2.0 * M_PI;
+		env->player.pos.y += sin(angle) * 0.25;
+		printf("left angle: %d\n", (int)(angle * (180.0 / M_PI)));
+	}
+	else if (keycode == D)
+	{
+		double angle = env->player.angle + (M_PI / 2.0);
+		if (angle < 0.0)
+			angle += 2.0 * M_PI;
+		if (angle > 2.0 * M_PI)
+			angle -= 2.0 * M_PI;
+		env->player.pos.x -= cos(angle) * 0.25;
+		angle = env->player.angle - (M_PI / 2.0);
+		if (angle < 0.0)
+			angle += 2.0 * M_PI;
+		if (angle > 2.0 * M_PI)
+			angle -= 2.0 * M_PI;
+		env->player.pos.y -= sin(angle) * 0.25;
+		printf("right angle: %d\n", (int)(angle * (180.0 / M_PI)));
+	}
+	printf("angle: %d\n", (int)(env->player.angle * (180.0 / M_PI)));
 	ft_draw(env);
 	return (0);
 }
@@ -307,14 +317,14 @@ int main(int argc, char **argv)
 		{
 			if (map.array[y][x] == 'N' || map.array[y][x] == 'S' || map.array[y][x] == 'E' || map.array[y][x] == 'W')
 			{
-				env.player.pos.x = x + 0.5f;
-				env.player.pos.y = y + 0.5f;
+				env.player.pos.x = x + 0.5;
+				env.player.pos.y = y + 0.5;
 				if (map.array[y][x] == 'S')
-					env.player.angle = M_PI * 0.5f;
+					env.player.angle = M_PI * 0.5;
 				else if (map.array[y][x] == 'N')
-					env.player.angle = M_PI * 1.5f;
+					env.player.angle = M_PI * 1.5;
 				else if (map.array[y][x] == 'E')
-					env.player.angle = 0.f;
+					env.player.angle = 0.0;
 				else if (map.array[y][x] == 'W')
 					env.player.angle = M_PI;
 				env.player.delta.x = cos(env.player.angle);
