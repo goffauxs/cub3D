@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    makefile                                           :+:      :+:    :+:    #
+#    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/13 14:31:55 by sgoffaux          #+#    #+#              #
-#    Updated: 2021/10/14 13:28:39 by sgoffaux         ###   ########.fr        #
+#    Updated: 2021/10/19 14:10:23 by sgoffaux         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,14 +17,19 @@ MLX			=	minilibx/
 LIBFT_A		=	$(addprefix $(LIBFT), libft.a)
 GNL_A		=	$(addprefix $(GNL), libgnl.a)
 MLX_A		=	$(addprefix $(MLX), libmlx.a)
+WIDTH		=	1024
+HEIGHT		=	720
 
 CC			=	gcc
 INCLUDE 	=	includes
-CFLAGS		=	-Wall -Wextra -Werror -I$(INCLUDE)
+CFLAGS		=	-Wall -Wextra -Werror -I$(INCLUDE) -D WIDTH=$(WIDTH) -D HEIGHT=$(HEIGHT)
 RM			=	rm -f
 SRCS		=	main.c \
 				utils.c \
 				parse_map.c \
+				move.c \
+				look.c \
+				hooks.c \
 
 OBJS		=	$(SRCS:%.c=%.o)
 
