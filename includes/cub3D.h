@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/19 13:58:44 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/20 15:36:58 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,12 @@
 # define A 0
 # define S 1
 # define D 2
+# define TRUE 1
+# define FALSE 0
 
 clock_t g_begin;
+
+typedef int		t_bool;
 
 typedef struct	s_map
 {
@@ -59,6 +63,20 @@ typedef struct	s_vi2d
 	int	x;
 	int	y;
 }				t_vi2d;
+
+typedef struct	s_ray
+{
+	t_vd2d	dir;
+	t_vd2d	step_size;
+	t_vd2d	start;
+	t_vi2d	map_check;
+	t_vd2d	len;
+	t_vi2d	step;
+	t_bool	tile_found;
+	double	dist;
+	t_vd2d	intersection;
+	t_bool	vertical;
+}				t_ray;
 
 typedef struct	s_player
 {
@@ -105,5 +123,6 @@ void 	ft_draw(t_cub3d *env);
 int		close_win(void *param);
 void	look_left(t_cub3d *env);
 void	look_right(t_cub3d *env);
+double	get_ray_len(t_cub3d *env, double offset, t_ray *r);
 
 #endif

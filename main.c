@@ -6,14 +6,16 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/19 14:18:12 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/20 15:47:14 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
 
-#define TILE_SIZE 8
-#define DR 0.0005454153912
+#define TILE_SIZE 32
+#define FOV 60
+#define DR ((double)FOV / WIDTH) * (M_PI / 180.0)
+// #define DR 0.001022653858588
 
 static void	ft_put_pixel(t_cub3d *env, int x, int y, int color)
 {
@@ -28,9 +30,89 @@ static void	ft_put_pixel(t_cub3d *env, int x, int y, int color)
 	}
 }
 
+int	ft_max(int a, int b)
+{
+	if (a > b)
+		return (a);
+	return (b);
+}
+
+void	init_ray(t_cub3d *env, t_ray *r, double offset)
+{
+	r->dir.x = cos(env->player.angle + offset);
+	r->dir.y = sin(env->player.angle + offset);
+	r->step_size.x = sqrt(1.0 + pow(r->dir.y / r->dir.x, 2));
+	r->step_size.y = sqrt(1.0 + pow(r->dir.x / r->dir.y, 2));
+	r->start.x = env->player.pos.x;
+	r->start.y = env->player.pos.y;
+	r->map_check.x = (int)r->start.x;
+	r->map_check.y = (int)r->start.y;
+	r->tile_found = FALSE;
+	r->vertical = FALSE;
+	if (r->dir.x < 0)
+		r->len.x = (r->start.x - (double)r->map_check.x) * r->step_size.x;
+	else
+		r->len.x = ((double)(r->map_check.x + 1) - r->start.x) * r->step_size.x;
+	r->step.x = 1 - (r->dir.x < 0) * 2;
+	if (r->dir.y < 0)
+		r->len.y = (r->start.y - (double)r->map_check.y) * r->step_size.y;
+	else
+		r->len.y = ((double)(r->map_check.y + 1) - r->start.y) * r->step_size.y;
+	r->step.y = 1 - (r->dir.y < 0) * 2;
+}
+
+void	ray_loop(t_cub3d *env, t_ray *r)
+{
+	double max_dist;
+
+	max_dist = (double)ft_max(env->map->height, env->map->width);
+	while (!r->tile_found && r->dist < max_dist)
+	{
+		if (r->len.x < r->len.y)
+		{
+			r->map_check.x += r->step.x;
+			r->dist = r->len.x;
+			r->vertical = TRUE;
+			r->len.x += r->step_size.x;
+		}
+		else
+		{
+			r->map_check.y += r->step.y;
+			r->dist = r->len.y;
+			r->vertical = FALSE;
+			r->len.y += r->step_size.y;
+		}
+		if (r->map_check.x >= 0 && r->map_check.x < env->map->width
+			&& r->map_check.y >= 0 && r->map_check.y < env->map->height
+			&& env->map->array[r->map_check.y][r->map_check.x] == '1')
+			r->tile_found = TRUE;
+	}
+}
+
+double	get_ray_len(t_cub3d *env, double offset, t_ray *r)
+{
+	double	len;
+	double	angle_correction;
+
+	init_ray(env, r, offset);
+	ray_loop(env, r);
+	if (r->tile_found)
+	{
+		r->intersection.x = r->dir.x * r->dist + r->start.x;
+		r->intersection.y = r->dir.y * r->dist + r->start.y;
+	}
+	len = sqrt(pow(r->intersection.x - r->start.x, 2)
+			+ pow(r->intersection.y - r->start.y, 2));
+	angle_correction = offset;
+	if (angle_correction < 0)
+		angle_correction += 2.0 * M_PI;
+	else if (angle_correction > 2.0 * M_PI)
+		angle_correction -= 2.0 * M_PI;
+	return (len * cos(angle_correction));
+}
+
 void ft_draw(t_cub3d *env)
 {
-	// ft_bzero(env->data_addr, WIDTH * HEIGHT * (env->bpp / 8));
 	for (int y = 0; y < HEIGHT / 2; y++)
 	{
 		for (int x = 0; x < WIDTH; x++)
@@ -43,83 +125,49 @@ void ft_draw(t_cub3d *env)
 	}
 	for (int i = MIN; i < MAX; i++)
 	{
-		t_vd2d ray_dir = {cos(env->player.angle + (i * DR)), sin(env->player.angle + (i * DR))};
-		t_vd2d ray_unit_step_size = {sqrt(1.0 + (ray_dir.y / ray_dir.x) * (ray_dir.y / ray_dir.x)), sqrt(1.0 + (ray_dir.x / ray_dir.y) * (ray_dir.x / ray_dir.y))};
-		t_vd2d ray_start = env->player.pos;
-		t_vi2d map_check;
-		map_check.x = (int)ray_start.x;
-		map_check.y = (int)ray_start.y;
-		t_vd2d ray_len;
-		t_vi2d step;
-
-		if (ray_dir.x < 0)
-			ray_len.x = (ray_start.x - (double)map_check.x) * ray_unit_step_size.x;
-		else
-			ray_len.x = ((double)(map_check.x + 1) - ray_start.x) * ray_unit_step_size.x;
-		step.x = 1 - (ray_dir.x < 0) * 2;
-		if (ray_dir.y < 0)
-			ray_len.y = (ray_start.y - (double)map_check.y) * ray_unit_step_size.y;
-		else
-			ray_len.y = ((double)(map_check.y + 1) - ray_start.y) * ray_unit_step_size.y;
-		step.y = 1 - (ray_dir.y < 0) * 2;
-
-		int b_tile_found = 0;
-		int	vertical = 0;
-		double max_dist = 100.0;
-		double dist = 0.0;
-		while (!b_tile_found && dist < max_dist)
-		{
-			if (ray_len.x < ray_len.y)
-			{
-				map_check.x += step.x;
-				dist = ray_len.x;
-				vertical = 1;
-				ray_len.x += ray_unit_step_size.x;
-			}
-			else
-			{
-				map_check.y += step.y;
-				dist = ray_len.y;
-				vertical = 0;
-				ray_len.y += ray_unit_step_size.y;
-			}
-			if (map_check.x >= 0 && map_check.x < env->map->width
-				&& map_check.y >= 0 && map_check.y < env->map->height)
-				if (env->map->array[map_check.y][map_check.x] == '1')
-					b_tile_found = 1;
-		}
-
-		t_vd2d intersection;
-		if (b_tile_found)
-		{
-			intersection.x = ray_dir.x * dist + ray_start.x;
-			intersection.y = ray_dir.y * dist + ray_start.y;
-		}
-		double len = sqrt((intersection.x - env->player.pos.x) * (intersection.x - env->player.pos.x) + (intersection.y - env->player.pos.y) * (intersection.y - env->player.pos.y));
-		double ca = i * DR;
-		if (ca < 0.0)
-			ca += 2.0 * M_PI;
-		if (ca > 2.0 * M_PI)
-			ca -= 2.0 * M_PI;
-		len = len * cos(ca);
+		t_ray	ray;
+		double len = get_ray_len(env, (double)i * DR, &ray);
 		int	mid = HEIGHT / 2;
-		int	line_len = (int)(HEIGHT / len * 2.5);
+		int	line_len = (int)(1 / len * HEIGHT);
 		int	bottom = mid - line_len / 2;
 		int	top = mid + line_len / 2;
 		bottom = (bottom > HEIGHT) ? HEIGHT : bottom;
 		top = (top < 0) ? 0 : top;
 		for (int j = bottom; j < top; j++)
 		{
-			if (vertical)
+			if (ray.vertical)
 				ft_put_pixel(env, i + MAX, j, 0xFFFF00);
 			else
 				ft_put_pixel(env, i + MAX, j, 0xB5B500);
 		}
 	}
+	// for (int y = 0; y < env->map->height; y++)
+	// {
+	// 	for (int x = 0; x < env->map->width; x++)
+	// 	{
+	// 		for (int i = 0; i < TILE_SIZE; i++)
+	// 		{
+	// 			for (int j = 0; j < TILE_SIZE; j++)
+	// 			{
+	// 				if (env->map->array[y][x] == '1')
+	// 					ft_put_pixel(env, (x * TILE_SIZE) + i, (y * TILE_SIZE) + j, 0xFF0000);
+	// 				else if (env->map->array[y][x] == '0')
+	// 					ft_put_pixel(env, (x * TILE_SIZE) + i, (y * TILE_SIZE) + j, 0x525252);
+	// 			}
+	// 		}
+	// 	}
+	// }
+	//t_vd2d delta = {env->player.pos.x + cos(env->player.angle), env->player.pos.y + sin(env->player.angle)};
+	//printf("pos: (%02.2f, %02.2f) | delta: (%02.2f, %02.2f) -- %f\n", env->player.pos.x * (double)TILE_SIZE, env->player.pos.y * (double)TILE_SIZE, delta.x * (double)TILE_SIZE, delta.y * (double)TILE_SIZE, env->player.angle);
+	// for (int i = -5; i < 5; i++)
+	// {
+	// 	for (int j = -5; j < 5; j++)
+	// 	{
+	// 		ft_put_pixel(env, (env->player.pos.x * (double)TILE_SIZE) + i, (env->player.pos.y * (double)TILE_SIZE) + j, 0xFFFF00);
+	// 	}
+	// }
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 }
-
-
 
 int main(int argc, char **argv)
 {

@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 10:35:58 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/19 13:35:41 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/20 11:12:16 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int	on_update(void *param)
 	counter_string = ft_itoa(fps);
 	ft_draw(env);
 	key_action(env);
-	mlx_string_put(env->mlx, env->win, 10, 10, 0xFF0000, counter_string);
+	//mlx_string_put(env->mlx, env->win, 10, 10, 0xFF0000, counter_string);
 	free(counter_string);
 	return (0);
 }
