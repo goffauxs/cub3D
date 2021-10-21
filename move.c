@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 10:28:16 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/20 15:47:27 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/21 16:45:33 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,80 +16,63 @@
 
 void	move_left(t_cub3d *env)
 {
+	t_ray	r;
+	double	x_comp;
+	double	y_comp;
 	double	angle;
-	int		x;
-	int		y;
-	int		x_delta;
-	int		y_delta;
-	
-	angle = env->player.angle - (M_PI / 2.0);
-	if (angle < 0.0)
-		angle += 2.0 * M_PI;
-	if (angle > 2.0 * M_PI)
-		angle -= 2.0 * M_PI;
-	x = (int)env->player.pos.x;
-	y = (int)env->player.pos.y;
-	x_delta = (int)(x + cos(angle));
-	y_delta = (int)(y + sin(angle));
-	if (env->map->array[y][x_delta] == '0')
+
+	angle = bound_angle(env->player.angle - (M_PI / 2.0));
+	x_comp = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
+	y_comp = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
+	if (x_comp > MOVE_SPEED * 5.0)
 		env->player.pos.x += cos(angle) * MOVE_SPEED;
-	if (env->map->array[y_delta][x] == '0')
+	if (y_comp > MOVE_SPEED * 5.0)
 		env->player.pos.y += sin(angle) * MOVE_SPEED;
 }
 
 void	move_right(t_cub3d *env)
 {
+	t_ray	r;
+	double	x_comp;
+	double	y_comp;
 	double	angle;
-	int		x;
-	int		y;
-	int		x_delta;
-	int		y_delta;
 
-	angle = env->player.angle + (M_PI / 2.0);
-	if (angle < 0.0)
-		angle += 2.0 * M_PI;
-	if (angle > 2.0 * M_PI)
-		angle -= 2.0 * M_PI;
-	x = (int)env->player.pos.x;
-	y = (int)env->player.pos.y;
-	x_delta = (int)(x + cos(angle));
-	y_delta = (int)(y + sin(angle));
-	if (env->map->array[y][x_delta] == '0')
+	angle = bound_angle(env->player.angle + (M_PI / 2.0));
+	x_comp = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
+	y_comp = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
+	if (x_comp > MOVE_SPEED * 5.0)
 		env->player.pos.x += cos(angle) * MOVE_SPEED;
-	if (env->map->array[y_delta][x] == '0')
+	if (y_comp > MOVE_SPEED * 5.0)
 		env->player.pos.y += sin(angle) * MOVE_SPEED;
 }
 
 void	move_forward(t_cub3d *env)
 {
-	int	x;
-	int	y;
-	int	x_delta;
-	int	y_delta;
+	t_ray	r;
+	double	x_comp;
+	double	y_comp;
 
-	x = (int)env->player.pos.x;
-	y = (int)env->player.pos.y;
-	x_delta = (int)(x + env->player.delta.x);
-	y_delta = (int)(y + env->player.delta.y);
-	if (env->map->array[y_delta][x] == '0')
-		env->player.pos.y += env->player.delta.y * MOVE_SPEED;
-	if (env->map->array[y][x_delta] == '0')
+	x_comp = get_ray_len(env, (cos(env->player.angle) < 0) * M_PI, &r);
+	y_comp = get_ray_len(env,
+		(sin(env->player.angle) < 0) * M_PI + (M_PI / 2.0), &r);
+	if (x_comp > MOVE_SPEED * 5.0)
 		env->player.pos.x += env->player.delta.x * MOVE_SPEED;
+	if (y_comp > MOVE_SPEED * 5.0)
+		env->player.pos.y += env->player.delta.y * MOVE_SPEED;
 }
 
 void	move_backward(t_cub3d *env)
 {
-	int	x;
-	int	y;
-	int	x_delta;
-	int	y_delta;
+	t_ray	r;
+	double	x_comp;
+	double	y_comp;
+	double	angle;
 
-	x = (int)env->player.pos.x;
-	y = (int)env->player.pos.y;
-	x_delta = (int)(x - env->player.delta.x);
-	y_delta = (int)(y - env->player.delta.y);
-	if (env->map->array[y_delta][x] == '0')
-		env->player.pos.y -= env->player.delta.y * MOVE_SPEED;
-	if (env->map->array[y][x_delta] == '0')
+	angle = bound_angle(env->player.angle + M_PI);
+	x_comp = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
+	y_comp = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
+	if (x_comp > MOVE_SPEED * 5.0)
 		env->player.pos.x -= env->player.delta.x * MOVE_SPEED;
+	if (y_comp > MOVE_SPEED * 5.0)
+		env->player.pos.y -= env->player.delta.y * MOVE_SPEED;
 }

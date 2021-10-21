@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 10:35:58 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/20 11:12:16 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/21 12:39:40 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,26 +79,9 @@ int	key_down(int keycode, void *param)
 int	on_update(void *param)
 {
 	t_cub3d		*env;
-	static int	frame_counter = 0;
-	char		*counter_string;
-	clock_t		end;
-	double		time_spent;
-	int			fps;
 
 	env = (t_cub3d *)param;
-	frame_counter++;
-	end = clock();
-	time_spent = (double)(end - g_begin) / CLOCKS_PER_SEC;
-	if (time_spent > 1)
-	{
-		frame_counter = 0;
-		g_begin = clock();
-	}
-	fps = (int)(frame_counter / time_spent);
-	counter_string = ft_itoa(fps);
 	ft_draw(env);
 	key_action(env);
-	//mlx_string_put(env->mlx, env->win, 10, 10, 0xFF0000, counter_string);
-	free(counter_string);
 	return (0);
 }

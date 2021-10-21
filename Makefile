@@ -6,7 +6,7 @@
 #    By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/13 14:31:55 by sgoffaux          #+#    #+#              #
-#    Updated: 2021/10/20 14:07:57 by sgoffaux         ###   ########.fr        #
+#    Updated: 2021/10/21 16:48:24 by sgoffaux         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,10 +32,14 @@ endif
 RM			=	rm -f
 SRCS		=	main.c \
 				utils.c \
-				parse_map.c \
 				move.c \
 				look.c \
 				hooks.c \
+				parsing/parsing_map_utils.c \
+				parsing/parsing.c \
+				parsing/parsing_map.c \
+				parsing/parsing_text_rgb.c \
+				parsing/parsing_utils.c \
 
 OBJS		=	$(SRCS:%.c=%.o)
 

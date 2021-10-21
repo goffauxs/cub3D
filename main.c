@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/20 15:47:14 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/21 16:40:06 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 #define TILE_SIZE 32
 #define FOV 60
 #define DR ((double)FOV / WIDTH) * (M_PI / 180.0)
-// #define DR 0.001022653858588
 
 static void	ft_put_pixel(t_cub3d *env, int x, int y, int color)
 {
-	int		i;
+	int	i;
 
 	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
 	{
@@ -30,6 +29,16 @@ static void	ft_put_pixel(t_cub3d *env, int x, int y, int color)
 	}
 }
 
+static int	ft_get_pixel(t_text *tex, int x, int y)
+{
+	int		color;
+	char	*dst;
+
+	dst = tex->data_addr + (y * tex->size_line + x * (tex->bpp / 8));
+	color = *(unsigned int *)dst;
+	return (color);
+}
+
 int	ft_max(int a, int b)
 {
 	if (a > b)
@@ -37,14 +46,13 @@ int	ft_max(int a, int b)
 	return (b);
 }
 
-void	init_ray(t_cub3d *env, t_ray *r, double offset)
+void	init_ray(t_cub3d *env, t_ray *r, double angle)
 {
-	r->dir.x = cos(env->player.angle + offset);
-	r->dir.y = sin(env->player.angle + offset);
+	r->dir.x = cos(angle);
+	r->dir.y = sin(angle);
 	r->step_size.x = sqrt(1.0 + pow(r->dir.y / r->dir.x, 2));
 	r->step_size.y = sqrt(1.0 + pow(r->dir.x / r->dir.y, 2));
-	r->start.x = env->player.pos.x;
-	r->start.y = env->player.pos.y;
+	r->start = env->player.pos;
 	r->map_check.x = (int)r->start.x;
 	r->map_check.y = (int)r->start.y;
 	r->tile_found = FALSE;
@@ -89,12 +97,11 @@ void	ray_loop(t_cub3d *env, t_ray *r)
 	}
 }
 
-double	get_ray_len(t_cub3d *env, double offset, t_ray *r)
+double	get_ray_len(t_cub3d *env, double angle, t_ray *r)
 {
 	double	len;
-	double	angle_correction;
 
-	init_ray(env, r, offset);
+	init_ray(env, r, angle);
 	ray_loop(env, r);
 	if (r->tile_found)
 	{
@@ -103,12 +110,63 @@ double	get_ray_len(t_cub3d *env, double offset, t_ray *r)
 	}
 	len = sqrt(pow(r->intersection.x - r->start.x, 2)
 			+ pow(r->intersection.y - r->start.y, 2));
-	angle_correction = offset;
-	if (angle_correction < 0)
-		angle_correction += 2.0 * M_PI;
-	else if (angle_correction > 2.0 * M_PI)
-		angle_correction -= 2.0 * M_PI;
-	return (len * cos(angle_correction));
+	return (len);
+}
+
+void xpm_to_image(t_cub3d *env)
+{
+	int	i;
+
+	i = 0;
+	while (i < 4)
+	{
+		env->texture[i].img = mlx_xpm_file_to_image(env->mlx,
+			env->map->tex_path[i], &env->texture[i].width,
+			&env->texture[i].height);
+    	env->texture[i].data_addr = mlx_get_data_addr(env->texture[i].img,
+			&env->texture[i].bpp, &env->texture[i].size_line,
+			&env->texture[i].endian);
+		i++;
+	}
+}
+
+void	draw_mapped_texture(t_cub3d *env, double angle, int line_len, t_ray *r, int k)
+{
+	double	i;
+	int		j;
+	int		tex_idx;
+	int		color;
+	double 	step;
+	int		col;
+
+	if (r->vertical)
+	{
+		if (sin(angle) < 0)
+			tex_idx = NORTH;
+		else
+			tex_idx = SOUTH;
+		col = (int)((r->intersection.y - (int)r->intersection.y) * (double)env->texture[tex_idx].width);
+	}
+	else
+	{
+		if (cos(angle) < 0)
+			tex_idx = WEST;
+		else
+			tex_idx = EAST;
+		col = (int)((r->intersection.x - (int)r->intersection.x) * (double)env->texture[tex_idx].width);
+	}
+	i = 0.0;
+	j = HEIGHT / 2.0 - (line_len / 2.0);
+	step = env->texture[tex_idx].height / (double)line_len;
+	// printf("tex width: %d | tex_height: %d\n", env->texture[tex_idx].width, env->texture[tex_idx].height);
+	while (i < env->texture[tex_idx].height)
+	{
+		//printf("i: %f | step: %f | col: %d\n", i, step, col);
+		color = ft_get_pixel(&env->texture[tex_idx], col, (int)i);
+		ft_put_pixel(env, k, j, color);
+		j++;
+		i += step;
+	}
 }
 
 void ft_draw(t_cub3d *env)
@@ -126,46 +184,20 @@ void ft_draw(t_cub3d *env)
 	for (int i = MIN; i < MAX; i++)
 	{
 		t_ray	ray;
-		double len = get_ray_len(env, (double)i * DR, &ray);
-		int	mid = HEIGHT / 2;
-		int	line_len = (int)(1 / len * HEIGHT);
-		int	bottom = mid - line_len / 2;
-		int	top = mid + line_len / 2;
-		bottom = (bottom > HEIGHT) ? HEIGHT : bottom;
-		top = (top < 0) ? 0 : top;
-		for (int j = bottom; j < top; j++)
-		{
-			if (ray.vertical)
-				ft_put_pixel(env, i + MAX, j, 0xFFFF00);
-			else
-				ft_put_pixel(env, i + MAX, j, 0xB5B500);
-		}
+		double angle = bound_angle(env->player.angle + (double)i * DR);
+		double ca = bound_angle((double)i * DR);
+		double len = get_ray_len(env, angle, &ray);
+		len *= cos(ca);
+		int	line_len = (int)(atan2(0.5, len) * (180.0 / M_PI) / ((double)FOV / WIDTH) * 2.0);
+		// for (int j = mid - line_len; j < mid + line_len; j++)
+		// {
+		// 	if (ray.vertical)
+		// 		ft_put_pixel(env, i + MAX, j, 0xFFFF00);
+		// 	else
+		// 		ft_put_pixel(env, i + MAX, j, 0xB5B500);
+		// }
+		draw_mapped_texture(env, angle, line_len, &ray, i + MAX);
 	}
-	// for (int y = 0; y < env->map->height; y++)
-	// {
-	// 	for (int x = 0; x < env->map->width; x++)
-	// 	{
-	// 		for (int i = 0; i < TILE_SIZE; i++)
-	// 		{
-	// 			for (int j = 0; j < TILE_SIZE; j++)
-	// 			{
-	// 				if (env->map->array[y][x] == '1')
-	// 					ft_put_pixel(env, (x * TILE_SIZE) + i, (y * TILE_SIZE) + j, 0xFF0000);
-	// 				else if (env->map->array[y][x] == '0')
-	// 					ft_put_pixel(env, (x * TILE_SIZE) + i, (y * TILE_SIZE) + j, 0x525252);
-	// 			}
-	// 		}
-	// 	}
-	// }
-	//t_vd2d delta = {env->player.pos.x + cos(env->player.angle), env->player.pos.y + sin(env->player.angle)};
-	//printf("pos: (%02.2f, %02.2f) | delta: (%02.2f, %02.2f) -- %f\n", env->player.pos.x * (double)TILE_SIZE, env->player.pos.y * (double)TILE_SIZE, delta.x * (double)TILE_SIZE, delta.y * (double)TILE_SIZE, env->player.angle);
-	// for (int i = -5; i < 5; i++)
-	// {
-	// 	for (int j = -5; j < 5; j++)
-	// 	{
-	// 		ft_put_pixel(env, (env->player.pos.x * (double)TILE_SIZE) + i, (env->player.pos.y * (double)TILE_SIZE) + j, 0xFFFF00);
-	// 	}
-	// }
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 }
 
@@ -173,22 +205,31 @@ int main(int argc, char **argv)
 {
 	t_map	map;
 	t_cub3d	env;
+	t_text	*text;
 
 	if (argc != 2)
 		exit(1);
+	parsing_init(&map);
+	if (cub_check(argc, argv, &map))
+	{
+		parsing_free(&map);
+		exit(-1);
+	}
 	env.mlx = mlx_init();
 	env.win = mlx_new_window(env.mlx, WIDTH, HEIGHT, "cub3D");
+	text = malloc(sizeof(t_text) * 4);
+	env.texture = text;
+	env.map = &map;
+	xpm_to_image(&env);
 	mlx_hook(env.win, 17, 1L << 17, close_win, NULL);
 	mlx_hook(env.win, 2, 1L << 0, key_down, &env);
 	mlx_hook(env.win, 3, 1L << 1, key_up, &env);
-	ft_check_valid(argv[1], &map);
 	env.img = mlx_new_image(env.mlx, WIDTH, HEIGHT);
 	if (!env.img)
 		return (1);
 	env.data_addr = mlx_get_data_addr(env.img, &env.bpp, &env.size_line, &env.endian);
 	if (!env.data_addr)
 		return (1);
-	env.map = &map;
 	for (int y = 0; y < map.height; y++)
 	{
 		for (int x = 0; x < map.width; x++)
@@ -214,4 +255,5 @@ int main(int argc, char **argv)
 	g_begin = clock();
 	mlx_loop_hook(env.mlx, on_update, &env);
 	mlx_loop(env.mlx);
+	free(env.texture);
 }
