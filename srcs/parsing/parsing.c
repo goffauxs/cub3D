@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
+/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 10:07:59 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/21 15:08:21 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 16:13:35 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	parsing_init(t_map *parsing)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < 4)

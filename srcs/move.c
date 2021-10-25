@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   move.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
+/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 10:28:16 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/21 16:45:33 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 14:12:15 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	move_forward(t_cub3d *env)
 
 	x_comp = get_ray_len(env, (cos(env->player.angle) < 0) * M_PI, &r);
 	y_comp = get_ray_len(env,
-		(sin(env->player.angle) < 0) * M_PI + (M_PI / 2.0), &r);
+			(sin(env->player.angle) < 0) * M_PI + (M_PI / 2.0), &r);
 	if (x_comp > MOVE_SPEED * 5.0)
 		env->player.pos.x += env->player.delta.x * MOVE_SPEED;
 	if (y_comp > MOVE_SPEED * 5.0)

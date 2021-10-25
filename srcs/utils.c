@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
+/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 15:04:15 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/21 11:51:13 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 14:11:44 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,3 @@ double	bound_angle(double angle)
 		return (angle - 2.0 * M_PI);
 	return (angle);
 }
-

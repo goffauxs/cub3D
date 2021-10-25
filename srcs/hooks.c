@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hooks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
+/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 10:35:58 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/21 12:39:40 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 14:12:57 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	close_win(void *param)
 	exit(0);
 }
 
-static void key_action(t_cub3d *env)
+static void	key_action(t_cub3d *env)
 {
 	if (env->keys.forward)
 		move_forward(env);
@@ -36,7 +36,7 @@ static void key_action(t_cub3d *env)
 
 int	key_up(int keycode, void *param)
 {
-	t_cub3d *env;
+	t_cub3d	*env;
 
 	env = (t_cub3d *)param;
 	if (keycode == ARROW_LEFT)

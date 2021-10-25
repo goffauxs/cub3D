@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_file_utils.c                                :+:      :+:    :+:   */
+/*   parsing_map_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/20 15:52:37 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/20 17:16:48 by mdeclerf         ###   ########.fr       */
+/*   Created: 2021/10/25 16:14:09 by mdeclerf          #+#    #+#             */
+/*   Updated: 2021/10/25 16:14:21 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ int	check_char(char **file, int mapbeg)
 		j = 0;
 		while (file[mapbeg][j])
 		{
-			if (file[mapbeg][j] != '1' && file[mapbeg][j] != '0' && file[mapbeg][j] != '2'
+			if (file[mapbeg][j] != '1' && file[mapbeg][j] != '0'
+				&& file[mapbeg][j] != '2'
 				&& !ft_isspace(file[mapbeg][j]) && file[mapbeg][j] != 'N'
 				&& file[mapbeg][j] != 'W' && file[mapbeg][j] != 'S'
 				&& file[mapbeg][j] != 'E')

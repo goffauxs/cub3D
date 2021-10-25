@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    makefile                                           :+:      :+:    :+:    #
+#    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+         #
+#    By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/13 14:31:55 by sgoffaux          #+#    #+#              #
-#    Updated: 2021/10/21 16:48:24 by sgoffaux         ###   ########.fr        #
+#    Updated: 2021/10/25 16:24:16 by mdeclerf         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,17 +29,23 @@ ifdef HEIGHT
 	CFLAGS	+=	-D HEIGHT=$(HEIGHT)
 endif
 
+DIR_PARSING =	srcs/parsing/
+
 RM			=	rm -f
 SRCS		=	main.c \
-				utils.c \
-				move.c \
-				look.c \
-				hooks.c \
-				parsing/parsing_map_utils.c \
-				parsing/parsing.c \
-				parsing/parsing_map.c \
-				parsing/parsing_text_rgb.c \
-				parsing/parsing_utils.c \
+				srcs/utils.c \
+				srcs/move.c \
+				srcs/look.c \
+				srcs/hooks.c \
+				srcs/pixel.c \
+				srcs/draw.c \
+				srcs/ray_casting.c \
+				$(DIR_PARSING)parsing_map_utils.c \
+				$(DIR_PARSING)parsing.c \
+				$(DIR_PARSING)parsing_map.c \
+				$(DIR_PARSING)parsing_rgb.c \
+				$(DIR_PARSING)parsing_text.c \
+				$(DIR_PARSING)parsing_utils.c \
 
 OBJS		=	$(SRCS:%.c=%.o)
 

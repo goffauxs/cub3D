@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:49:07 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/21 11:39:36 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/25 16:13:48 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	fill_array(char **file, t_map *parsing, int mapbeg)
 	parsing->width = get_max_len(file, mapbeg);
 	if (parsing_allocation(parsing))
 		return (-1);
-	while(file && file[mapbeg] && file[mapbeg][0])
+	while (file && file[mapbeg] && file[mapbeg][0])
 	{
 		replace_space(j, parsing, file[mapbeg]);
 		mapbeg++;

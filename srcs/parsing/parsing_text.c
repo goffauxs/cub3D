@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_text_rgb.c                                 :+:      :+:    :+:   */
+/*   parsing_text.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
+/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:49:07 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 12:21:00 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 16:25:22 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,23 @@ int	check_args(int argc, char **argv)
 		return (error("Does this map exist ?", NULL));
 	}
 	close(fd);
+	return (0);
+}
+
+int	check_texture_path(t_map *parsing)
+{
+	int	i;
+	int	fd;
+
+	i = 0;
+	while (i < 4)
+	{
+		fd = open(parsing->tex_path[i], O_RDONLY);
+		if (fd == -1)
+			return (-1);
+		close(fd);
+		i++;
+	}
 	return (0);
 }
 
@@ -53,91 +70,7 @@ int	check_textures(t_map *parsing, char **file)
 	if (!parsing->tex_path[NORTH] || !parsing->tex_path[SOUTH]
 		|| !parsing->tex_path[WEST] || !parsing->tex_path[EAST])
 		return (error("Error: textures missing", NULL));
-	if (open(parsing->tex_path[NORTH], O_RDONLY) == -1
-		|| open(parsing->tex_path[SOUTH], O_RDONLY) == -1
-		|| open(parsing->tex_path[WEST], O_RDONLY) == -1
-		|| open(parsing->tex_path[EAST], O_RDONLY) == -1)
+	if (check_texture_path(parsing))
 		return (error("Error: wrong texture path", NULL));
-	return (0);
-}
-
-static int	check_digits(char **split)
-{
-	int		j;
-	int		i;
-
-	i = 0;
-	while (split[i])
-	{
-		if (ft_atoi(split[i]) < 0 || ft_atoi(split[i]) > 255)
-			return (-1);
-		j = 0;
-		while (split[i][j])
-		{
-			if (!ft_isdigit(split[i][j]) && !ft_isspace(split[i][j]))
-				return (-1);
-			j++;
-		}
-		i++;
-	}
-	if (i != 3)
-		return (-1);
-	return (0);
-}
-
-static	int	check_rgb(int *count, char *line, t_map *parsing, char *str)
-{
-	char	**split;
-	char	*trim;
-	int		i;
-
-	i = 0;
-	trim = ft_strtrim(line, str);
-	split = ft_split(trim, ',');
-	free(trim);
-	if (check_digits(split))
-	{
-		free_split(split);
-		return (-1);
-	}
-	while (split[i])
-	{
-		if (str[0] == 'F')
-			parsing->floor[i] = ft_atoi(split[i]);
-		else
-			parsing->ceil[i] = ft_atoi(split[i]);
-		i++;
-	}
-	(*count)++;
-	free_split(split);
-	return (0);
-}
-
-int	check_floor(t_map *parsing, char **file)
-{
-	char	*trim;
-	int		i;
-	int		count;
-
-	i = 0;
-	count = 0;
-	while (file && file[i])
-	{
-		trim = ft_strtrim(file[i], " \t");
-		if (!ft_strncmp(trim, "F", 1))
-		{
-			if (check_rgb(&count, trim, parsing, "F \t"))
-				return (error("Error: wrong RGB formatting", trim));
-		}
-		if (!ft_strncmp(trim, "C", 1))
-		{
-			if (check_rgb(&count, trim, parsing, "C \t"))
-				return (error("Error: wrong RGB formatting", trim));
-		}
-		free(trim);
-		i++;
-	}
-	if (count != 2)
-		return (error("Error: wrong number of colors", NULL));
 	return (0);
 }

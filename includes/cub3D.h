@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
+/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/25 11:36:23 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 16:12:28 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@
 # ifndef HEIGHT
 #  define HEIGHT 720
 # endif
-# define MIN 0 - WIDTH / 2
-# define MAX WIDTH / 2
 # define KEY_ESC 53
 # define ARROW_LEFT 123
 # define ARROW_RIGHT 124
@@ -45,11 +43,12 @@
 # define WEST 2
 # define NORTH 3
 
-clock_t g_begin;
+# define TILE_SIZE 32
+# define FOV 60
 
 typedef int		t_bool;
 
-typedef struct	s_map
+typedef struct s_map
 {
 	int		width;
 	int		height;
@@ -59,19 +58,19 @@ typedef struct	s_map
 	int		ceil[3];
 }				t_map;
 
-typedef struct	s_vd2d
+typedef struct s_vd2d
 {
 	double	x;
 	double	y;
 }				t_vd2d;
 
-typedef struct	s_vi2d
+typedef struct s_vi2d
 {
 	int	x;
 	int	y;
 }				t_vi2d;
 
-typedef struct	s_ray
+typedef struct s_ray
 {
 	t_vd2d	dir;
 	t_vd2d	step_size;
@@ -86,14 +85,14 @@ typedef struct	s_ray
 	double	line_len;
 }				t_ray;
 
-typedef struct	s_player
+typedef struct s_player
 {
 	t_vd2d	pos;
 	t_vd2d	delta;
 	float	angle;
 }				t_player;
 
-typedef struct	s_keys
+typedef struct s_keys
 {
 	int	left;
 	int	right;
@@ -102,6 +101,13 @@ typedef struct	s_keys
 	int	forward;
 	int	backward;
 }				t_keys;
+
+typedef struct s_draw
+{
+	double	angle;
+	double	ca;
+	double	len;
+}				t_draw;
 
 typedef struct s_text
 {
@@ -114,7 +120,7 @@ typedef struct s_text
 	int			endian;
 }				t_text;
 
-typedef struct	s_cub3d
+typedef struct s_cub3d
 {
 	void		*mlx;
 	void		*win;
@@ -159,12 +165,29 @@ void	move_backward(t_cub3d *env);
 int		key_down(int keycode, void *param);
 int		key_up(int keycode, void *param);
 int		on_update(void *param);
-void 	ft_draw(t_cub3d *env);
+void	ft_draw(t_cub3d *env);
 int		close_win(void *param);
 void	look_left(t_cub3d *env);
 void	look_right(t_cub3d *env);
 double	get_ray_len(t_cub3d *env, double angle, t_ray *r);
 double	ft_abs(double a);
 double	bound_angle(double angle);
+
+/*
+** pixel.c
+*/
+void	ft_put_pixel(t_cub3d *env, int x, int y, int color);
+int		ft_get_pixel(t_text *tex, int x, int y);
+
+/*
+** ray_casting.c
+*/
+double	get_ray_len(t_cub3d *env, double angle, t_ray *r);
+
+/*
+** draw.c
+*/
+void	xpm_to_image(t_cub3d *env);
+void	ft_draw(t_cub3d *env);
 
 #endif
