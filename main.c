@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/21 16:40:06 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 12:23:03 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,40 +130,47 @@ void xpm_to_image(t_cub3d *env)
 	}
 }
 
-void	draw_mapped_texture(t_cub3d *env, double angle, int line_len, t_ray *r, int k)
+void	draw_mapped_texture(t_cub3d *env, double angle, t_ray *r, int k)
 {
 	double	i;
 	int		j;
 	int		tex_idx;
-	int		color;
 	double 	step;
 	int		col;
 
 	if (r->vertical)
 	{
-		if (sin(angle) < 0)
-			tex_idx = NORTH;
+		if (cos(angle) < 0)
+		{
+			tex_idx = WEST;
+			col = (int)((1.0 - (r->intersection.y - (int)r->intersection.y)) * (double)env->texture[tex_idx].width);
+		}
 		else
-			tex_idx = SOUTH;
-		col = (int)((r->intersection.y - (int)r->intersection.y) * (double)env->texture[tex_idx].width);
+		{
+			tex_idx = EAST;
+			col = (int)((r->intersection.y - (int)r->intersection.y) * (double)env->texture[tex_idx].width);
+		}
 	}
 	else
 	{
-		if (cos(angle) < 0)
-			tex_idx = WEST;
+		if (sin(angle) < 0)
+		{
+			tex_idx = NORTH;
+			col = (int)((r->intersection.x - (int)r->intersection.x) * (double)env->texture[tex_idx].width);
+		}
 		else
-			tex_idx = EAST;
-		col = (int)((r->intersection.x - (int)r->intersection.x) * (double)env->texture[tex_idx].width);
+		{
+			tex_idx = SOUTH;
+			col = (int)((1.0 - (r->intersection.x - (int)r->intersection.x)) * (double)env->texture[tex_idx].width);
+		}
 	}
 	i = 0.0;
-	j = HEIGHT / 2.0 - (line_len / 2.0);
-	step = env->texture[tex_idx].height / (double)line_len;
-	// printf("tex width: %d | tex_height: %d\n", env->texture[tex_idx].width, env->texture[tex_idx].height);
-	while (i < env->texture[tex_idx].height)
+	j = (int)(HEIGHT / 2.0 - (r->line_len / 2.0));
+	step = env->texture[tex_idx].height / (double)r->line_len;
+	while (j < (int)(HEIGHT / 2.0 + (r->line_len / 2.0)))
 	{
-		//printf("i: %f | step: %f | col: %d\n", i, step, col);
-		color = ft_get_pixel(&env->texture[tex_idx], col, (int)i);
-		ft_put_pixel(env, k, j, color);
+		if (j < HEIGHT && j > 0)
+			ft_put_pixel(env, k, j, ft_get_pixel(&env->texture[tex_idx], col, (int)i));
 		j++;
 		i += step;
 	}
@@ -171,15 +178,16 @@ void	draw_mapped_texture(t_cub3d *env, double angle, int line_len, t_ray *r, int
 
 void ft_draw(t_cub3d *env)
 {
+	// ft_bzero(env->data_addr, WIDTH * HEIGHT * (env->bpp / 8));
 	for (int y = 0; y < HEIGHT / 2; y++)
 	{
 		for (int x = 0; x < WIDTH; x++)
-			ft_put_pixel(env, x, y, 0x45b5ed);
+			ft_put_pixel(env, x, y, (env->map->ceil[0] << 16 | env->map->ceil[1] << 8 | env->map->ceil[2]));
 	}
 	for (int y = HEIGHT / 2; y < HEIGHT; y++)
 	{
 		for (int x = 0; x < WIDTH; x++)
-			ft_put_pixel(env, x, y, 0xa37000);
+			ft_put_pixel(env, x, y, (env->map->floor[0] << 16 | env->map->floor[1] << 8 | env->map->floor[2]));
 	}
 	for (int i = MIN; i < MAX; i++)
 	{
@@ -189,14 +197,8 @@ void ft_draw(t_cub3d *env)
 		double len = get_ray_len(env, angle, &ray);
 		len *= cos(ca);
 		int	line_len = (int)(atan2(0.5, len) * (180.0 / M_PI) / ((double)FOV / WIDTH) * 2.0);
-		// for (int j = mid - line_len; j < mid + line_len; j++)
-		// {
-		// 	if (ray.vertical)
-		// 		ft_put_pixel(env, i + MAX, j, 0xFFFF00);
-		// 	else
-		// 		ft_put_pixel(env, i + MAX, j, 0xB5B500);
-		// }
-		draw_mapped_texture(env, angle, line_len, &ray, i + MAX);
+		ray.line_len = line_len;
+		draw_mapped_texture(env, angle, &ray, i + MAX);
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 }
@@ -252,7 +254,12 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	g_begin = clock();
+	env.keys.backward = 0;
+	env.keys.forward = 0;
+	env.keys.left = 0;
+	env.keys.right = 0;
+	env.keys.look_left = 0;
+	env.keys.look_right = 0;
 	mlx_loop_hook(env.mlx, on_update, &env);
 	mlx_loop(env.mlx);
 	free(env.texture);

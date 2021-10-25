@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:49:07 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/21 16:05:58 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 12:21:00 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static int	check_digits(char **split)
 	i = 0;
 	while (split[i])
 	{
-		if (ft_atoi(split[i]) < 0 && ft_atoi(split[i]) > 255)
+		if (ft_atoi(split[i]) < 0 || ft_atoi(split[i]) > 255)
 			return (-1);
 		j = 0;
 		while (split[i][j])

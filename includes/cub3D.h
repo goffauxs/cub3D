@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/21 15:57:51 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/25 11:36:23 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef struct	s_ray
 	double	dist;
 	t_vd2d	intersection;
 	t_bool	vertical;
+	double	line_len;
 }				t_ray;
 
 typedef struct	s_player
