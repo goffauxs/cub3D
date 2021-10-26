@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 15:07:58 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/26 12:04:23 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:10:13 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,35 +102,35 @@ static void	draw_background(t_cub3d *env)
 	}
 }
 
-double sign (t_vd2d pt, t_vd2d p1, t_vd2d p2)
+t_bool sign (t_vd2d pt, t_vd2d p1, t_vd2d p2, t_vd2d p3)
 {
-    return (pt.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (pt.y - p2.y);
+	double	d1;
+	double	d2;
+	double	d3;
+	t_bool	has_neg;
+	t_bool	has_pos;
+
+	d1 = (pt.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (pt.y - p2.y);
+	d2 = (pt.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (pt.y - p3.y);
+	d3 = (pt.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (pt.y - p1.y);
+	has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+	has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(has_neg && has_pos);
 }
 
-int	draw_triangle(t_cub3d *env, t_vd2d pt)
+int	draw_triangle(t_player p, t_vd2d pt)
 {
 	t_vd2d	p1;
 	t_vd2d	p2;
 	t_vd2d	p3;
 
-	p1.x = env->player.pos.x + cos(env->player.angle) * 0.5;
-	p1.y = env->player.pos.y + sin(env->player.angle) * 0.5;
-	p2.x = env->player.pos.x + cos(env->player.angle + bound_angle(135.0 * (M_PI / 180.0))) * 0.5;
-	p2.y = env->player.pos.y + sin(env->player.angle + bound_angle(135.0 * (M_PI / 180.0))) * 0.5;
-	p3.x = env->player.pos.x + cos(env->player.angle + bound_angle(225.0 * (M_PI / 180.0))) * 0.5;
-	p3.y = env->player.pos.y + sin(env->player.angle + bound_angle(225.0 * (M_PI / 180.0))) * 0.5;
-
-	float d1, d2, d3;
-    t_bool has_neg, has_pos;
-
-    d1 = sign(pt, p1, p2);
-    d2 = sign(pt, p2, p3);
-    d3 = sign(pt, p3, p1);
-
-    has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
-    has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
-
-    return !(has_neg && has_pos);
+	p1.x = p.pos.x + cos(p.angle);
+	p1.y = p.pos.y + sin(p.angle);
+	p2.x = p.pos.x + cos(bound_angle(p.angle + DEG135));
+	p2.y = p.pos.y + sin(bound_angle(p.angle + DEG135));
+	p3.x = p.pos.x + cos(bound_angle(p.angle + DEG225));
+	p3.y = p.pos.y + sin(bound_angle(p.angle + DEG225));
+    return (sign(pt, p1, p2, p3));
 }
 
 void	ft_draw(t_cub3d *env)
@@ -168,7 +168,7 @@ void	ft_draw(t_cub3d *env)
 						ft_put_pixel(env, x * 5 + i, y * 5 + j, 0x696969);
 					else if (env->map->array[y][x] == '1')
 						ft_put_pixel(env, x * 5 + i, y * 5 + j, 0x333333);
-					if (draw_triangle(env, pt))
+					if (draw_triangle(env->player, pt))
 						ft_put_pixel(env, x * 5 + i, y * 5 + j, 0xFF0000);
 				}
 			}
