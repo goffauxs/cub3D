@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 15:07:58 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 16:09:28 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 12:04:23 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,37 @@ static void	draw_background(t_cub3d *env)
 	}
 }
 
+double sign (t_vd2d pt, t_vd2d p1, t_vd2d p2)
+{
+    return (pt.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (pt.y - p2.y);
+}
+
+int	draw_triangle(t_cub3d *env, t_vd2d pt)
+{
+	t_vd2d	p1;
+	t_vd2d	p2;
+	t_vd2d	p3;
+
+	p1.x = env->player.pos.x + cos(env->player.angle) * 0.5;
+	p1.y = env->player.pos.y + sin(env->player.angle) * 0.5;
+	p2.x = env->player.pos.x + cos(env->player.angle + bound_angle(135.0 * (M_PI / 180.0))) * 0.5;
+	p2.y = env->player.pos.y + sin(env->player.angle + bound_angle(135.0 * (M_PI / 180.0))) * 0.5;
+	p3.x = env->player.pos.x + cos(env->player.angle + bound_angle(225.0 * (M_PI / 180.0))) * 0.5;
+	p3.y = env->player.pos.y + sin(env->player.angle + bound_angle(225.0 * (M_PI / 180.0))) * 0.5;
+
+	float d1, d2, d3;
+    t_bool has_neg, has_pos;
+
+    d1 = sign(pt, p1, p2);
+    d2 = sign(pt, p2, p3);
+    d3 = sign(pt, p3, p1);
+
+    has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+    return !(has_neg && has_pos);
+}
+
 void	ft_draw(t_cub3d *env)
 {
 	int		x;
@@ -123,6 +154,25 @@ void	ft_draw(t_cub3d *env)
 				/ ((double)FOV / WIDTH) * 2.0);
 		ray.line_len = line_len;
 		draw_mapped_texture(env, draw.angle, &ray, x + WIDTH / 2);
+	}
+	for (int y = 0; y < env->map->height; y++)
+	{
+		for (int x = 0; x < env->map->width; x++)
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				for (int j = 0; j < 5; j++)
+				{
+					t_vd2d pt = {x + (i * 0.2), y + (j * 0.2)};
+					if (env->map->array[y][x] == '0' || env->map->array[y][x] == 'N' || env->map->array[y][x] == 'S' || env->map->array[y][x] == 'W' || env->map->array[y][x] == 'E')
+						ft_put_pixel(env, x * 5 + i, y * 5 + j, 0x696969);
+					else if (env->map->array[y][x] == '1')
+						ft_put_pixel(env, x * 5 + i, y * 5 + j, 0x333333);
+					if (draw_triangle(env, pt))
+						ft_put_pixel(env, x * 5 + i, y * 5 + j, 0xFF0000);
+				}
+			}
+		}
 	}
 	mlx_put_image_to_window(env->mlx, env->win, env->img, 0, 0);
 }
