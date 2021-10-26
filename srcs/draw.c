@@ -3,36 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
+/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 15:07:58 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/26 14:57:33 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/26 15:26:48 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
-
-void	xpm_to_image(t_cub3d *env)
-{
-	int	i;
-
-	i = 0;
-	while (i < 4)
-	{
-		env->texture[i].img = mlx_xpm_file_to_image(env->mlx,
-				env->map->tex_path[i], &env->texture[i].width,
-				&env->texture[i].height);
-		if (!env->texture[i].img)
-		{
-			ft_putendl_fd("Error: xpm file issue", 2);
-			exit(0);
-		}
-		env->texture[i].data_addr = mlx_get_data_addr(env->texture[i].img,
-				&env->texture[i].bpp, &env->texture[i].size_line,
-				&env->texture[i].endian);
-		i++;
-	}
-}
 
 static int	get_dir(t_cub3d *env, t_ray *r, int *col, double angle)
 {
@@ -62,6 +40,29 @@ static int	get_dir(t_cub3d *env, t_ray *r, int *col, double angle)
 	return (tex_idx);
 }
 
+static void draw_floor(t_cub3d *env, int j, int k)
+{
+	while(j < HEIGHT)
+	{
+		ft_put_pixel(env, k, j, (env->map->floor[0] << 16
+					| env->map->floor[1] << 8 | env->map->floor[2]));
+		j++;
+	}
+}
+
+static void draw_ceil(t_cub3d *env, int j, int k)
+{
+	int	i;
+
+	i = 0;
+	while(i < j && j >= 0)
+	{
+		ft_put_pixel(env, k, i, (env->map->ceil[0] << 16
+					| env->map->ceil[1] << 8 | env->map->ceil[2]));
+		i++;
+	}
+}
+
 static void	draw_mapped_texture(t_cub3d *env, double angle, t_ray *r, int k)
 {
 	double	i;
@@ -73,6 +74,7 @@ static void	draw_mapped_texture(t_cub3d *env, double angle, t_ray *r, int k)
 	tex_idx = get_dir(env, r, &col, angle);
 	i = 0.0;
 	j = (int)(HEIGHT / 2.0 - (r->line_len / 2.0));
+	draw_ceil(env, j, k);
 	step = env->texture[tex_idx].height / (double)r->line_len;
 	while (j < (int)(HEIGHT / 2.0 + (r->line_len / 2.0)))
 	{
@@ -82,29 +84,7 @@ static void	draw_mapped_texture(t_cub3d *env, double angle, t_ray *r, int k)
 		j++;
 		i += step;
 	}
-}
-
-static void	draw_background(t_cub3d *env)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (y++ < HEIGHT / 2)
-	{
-		x = 0;
-		while (x++ < WIDTH)
-			ft_put_pixel(env, x, y, (env->map->ceil[0] << 16
-					| env->map->ceil[1] << 8 | env->map->ceil[2]));
-	}
-	y = HEIGHT / 2;
-	while (y++ < HEIGHT)
-	{
-		x = 0;
-		while (x++ < WIDTH)
-			ft_put_pixel(env, x, y, (env->map->floor[0] << 16
-					| env->map->floor[1] << 8 | env->map->floor[2]));
-	}
+	draw_floor(env, j, k);
 }
 
 void	ft_draw(t_cub3d *env)
@@ -114,7 +94,6 @@ void	ft_draw(t_cub3d *env)
 	t_draw	draw;
 	t_ray	ray;
 
-	draw_background(env);
 	x = 0 - WIDTH / 2;
 	while (x++ < WIDTH / 2)
 	{

@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 15:04:15 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/25 14:11:44 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 15:26:50 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,26 @@ double	bound_angle(double angle)
 	else if (angle > 2.0 * M_PI)
 		return (angle - 2.0 * M_PI);
 	return (angle);
+}
+
+void	xpm_to_image(t_cub3d *env)
+{
+	int	i;
+
+	i = 0;
+	while (i < 4)
+	{
+		env->texture[i].img = mlx_xpm_file_to_image(env->mlx,
+				env->map->tex_path[i], &env->texture[i].width,
+				&env->texture[i].height);
+		if (!env->texture[i].img)
+		{
+			ft_putendl_fd("Error: xpm file issue", 2);
+			exit(0);
+		}
+		env->texture[i].data_addr = mlx_get_data_addr(env->texture[i].img,
+				&env->texture[i].bpp, &env->texture[i].size_line,
+				&env->texture[i].endian);
+		i++;
+	}
 }
