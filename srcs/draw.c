@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 15:07:58 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/26 15:26:48 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 15:28:47 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,25 +40,25 @@ static int	get_dir(t_cub3d *env, t_ray *r, int *col, double angle)
 	return (tex_idx);
 }
 
-static void draw_floor(t_cub3d *env, int j, int k)
+static void	draw_floor(t_cub3d *env, int j, int k)
 {
-	while(j < HEIGHT)
+	while (j < HEIGHT)
 	{
 		ft_put_pixel(env, k, j, (env->map->floor[0] << 16
-					| env->map->floor[1] << 8 | env->map->floor[2]));
+				| env->map->floor[1] << 8 | env->map->floor[2]));
 		j++;
 	}
 }
 
-static void draw_ceil(t_cub3d *env, int j, int k)
+static void	draw_ceil(t_cub3d *env, int j, int k)
 {
 	int	i;
 
 	i = 0;
-	while(i < j && j >= 0)
+	while (i < j && j >= 0)
 	{
 		ft_put_pixel(env, k, i, (env->map->ceil[0] << 16
-					| env->map->ceil[1] << 8 | env->map->ceil[2]));
+				| env->map->ceil[1] << 8 | env->map->ceil[2]));
 		i++;
 	}
 }
