@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/26 14:20:57 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:36:59 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@
 
 # define TILE_SIZE 32
 # define FOV 60
+# define DEG135 2.356194
+# define DEG225 3.926991
 
 typedef int		t_bool;
 

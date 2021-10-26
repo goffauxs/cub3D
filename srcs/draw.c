@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 15:07:58 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/26 14:32:21 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:37:15 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,37 @@ static void	draw_background(t_cub3d *env)
 			ft_put_pixel(env, x, y, (env->map->floor[0] << 16
 					| env->map->floor[1] << 8 | env->map->floor[2]));
 	}
+}
+
+t_bool sign (t_vd2d pt, t_vd2d p1, t_vd2d p2, t_vd2d p3)
+{
+	double	d1;
+	double	d2;
+	double	d3;
+	t_bool	has_neg;
+	t_bool	has_pos;
+
+	d1 = (pt.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (pt.y - p2.y);
+	d2 = (pt.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (pt.y - p3.y);
+	d3 = (pt.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (pt.y - p1.y);
+	has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+	has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(has_neg && has_pos);
+}
+
+int	draw_triangle(t_player p, t_vd2d pt)
+{
+	t_vd2d	p1;
+	t_vd2d	p2;
+	t_vd2d	p3;
+
+	p1.x = p.pos.x + cos(p.angle);
+	p1.y = p.pos.y + sin(p.angle);
+	p2.x = p.pos.x + cos(bound_angle(p.angle + DEG135));
+	p2.y = p.pos.y + sin(bound_angle(p.angle + DEG135));
+	p3.x = p.pos.x + cos(bound_angle(p.angle + DEG225));
+	p3.y = p.pos.y + sin(bound_angle(p.angle + DEG225));
+    return (sign(pt, p1, p2, p3));
 }
 
 void	ft_draw(t_cub3d *env)
