@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/26 14:36:59 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 15:00:43 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,13 @@
 # define SOUTH 1
 # define WEST 2
 # define NORTH 3
-# define DEG135 2.356194
-# define DEG225 3.926991
 
 # define TILE_SIZE 32
 # define FOV 60
 # define DEG135 2.356194
 # define DEG225 3.926991
+# define MOVE_SPEED 0.1
+# define LOOK_SPEED 0.06
 
 typedef int		t_bool;
 

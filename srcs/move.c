@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   move.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 10:28:16 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/25 14:12:15 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:59:56 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
-
-#define MOVE_SPEED 0.1
 
 void	move_left(t_cub3d *env)
 {

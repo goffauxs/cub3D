@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   look.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 10:44:12 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/25 14:12:37 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 15:00:30 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
-
-#define LOOK_SPEED 0.04
 
 void	look_left(t_cub3d *env)
 {

@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:15:50 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/13 14:38:38 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:56:06 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	ft_isint(const char *nptr)
 	if (nptr[i] == '-' || nptr[i] == '+')
 		i++;
 	if (!ft_isdigit(nptr[i]))
-	    return (0);
+		return (0);
 	while (nptr[i] != '\0' && ft_isdigit(nptr[i]))
 	{
 		if (value > 214748364 || (value == 214748364

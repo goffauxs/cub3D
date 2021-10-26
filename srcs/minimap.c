@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 10:44:52 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/26 14:25:39 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:58:45 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,12 @@ int	draw_triangle(t_player p, t_vd2d pt)
 	t_vd2d	p2;
 	t_vd2d	p3;
 
-	p1.x = p.pos.x + cos(p.angle);
-	p1.y = p.pos.y + sin(p.angle);
-	p2.x = p.pos.x + cos(bound_angle(p.angle + DEG135));
-	p2.y = p.pos.y + sin(bound_angle(p.angle + DEG135));
-	p3.x = p.pos.x + cos(bound_angle(p.angle + DEG225));
-	p3.y = p.pos.y + sin(bound_angle(p.angle + DEG225));
+	p1.x = p.pos.x + cos(p.angle) * 0.5;
+	p1.y = p.pos.y + sin(p.angle) * 0.5;
+	p2.x = p.pos.x + cos(bound_angle(p.angle + DEG135)) * 0.5;
+	p2.y = p.pos.y + sin(bound_angle(p.angle + DEG135)) * 0.5;
+	p3.x = p.pos.x + cos(bound_angle(p.angle + DEG225)) * 0.5;
+	p3.y = p.pos.y + sin(bound_angle(p.angle + DEG225)) * 0.5;
 	return (sign(pt, p1, p2, p3));
 }
 
