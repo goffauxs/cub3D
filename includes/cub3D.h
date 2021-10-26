@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/25 16:12:28 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:20:57 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@
 # define SOUTH 1
 # define WEST 2
 # define NORTH 3
+# define DEG135 2.356194
+# define DEG225 3.926991
 
 # define TILE_SIZE 32
 # define FOV 60
@@ -189,5 +191,7 @@ double	get_ray_len(t_cub3d *env, double angle, t_ray *r);
 */
 void	xpm_to_image(t_cub3d *env);
 void	ft_draw(t_cub3d *env);
+
+void	draw_minimap(t_cub3d *env);
 
 #endif

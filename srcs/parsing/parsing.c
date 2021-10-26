@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 10:07:59 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 16:13:35 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/25 18:41:04 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,20 @@ int	cub_check(int argc, char **argv, t_map *parsing)
 	if (!file)
 		return (-1);
 	if (check_textures(parsing, file))
-		return (return_split_free(file));
+	{
+		free_split(file);
+		return (-1);
+	}
 	if (check_floor(parsing, file))
-		return (return_split_free(file));
+	{
+		free_split(file);
+		return (-1);
+	}
 	if (check_map(parsing, file))
-		return (return_split_free(file));
+	{
+		free_split(file);
+		return (-1);
+	}
 	free_split(file);
 	return (0);
 }

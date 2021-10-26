@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 10:07:59 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 16:34:49 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/25 18:41:32 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,5 @@ int	error(char *msg, char *free_ptr)
 	if (free_ptr)
 		free(free_ptr);
 	ft_putendl_fd(msg, 2);
-	return (-1);
-}
-
-int	return_split_free(char **split)
-{
-	free_split(split);
 	return (-1);
 }

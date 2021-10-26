@@ -6,7 +6,7 @@
 #    By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/13 14:31:55 by sgoffaux          #+#    #+#              #
-#    Updated: 2021/10/25 16:24:16 by mdeclerf         ###   ########.fr        #
+#    Updated: 2021/10/26 14:33:26 by mdeclerf         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,6 +40,7 @@ SRCS		=	main.c \
 				srcs/pixel.c \
 				srcs/draw.c \
 				srcs/ray_casting.c \
+				srcs/minimap.c \
 				$(DIR_PARSING)parsing_map_utils.c \
 				$(DIR_PARSING)parsing.c \
 				$(DIR_PARSING)parsing_map.c \
@@ -52,7 +53,7 @@ OBJS		=	$(SRCS:%.c=%.o)
 all:			$(NAME)
 
 $(NAME):		$(OBJS) $(LIBFT_A) $(GNL_A) $(MLX_A)
-				@$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT) -lft -L$(GNL) -lgnl -L$(MLX) -lmlx -lm -o $(NAME) -framework OpenGL -framework AppKit -fsanitize=address -g
+				@$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT) -lft -L$(GNL) -lgnl -L$(MLX) -lmlx -lm -o $(NAME) -framework OpenGL -framework AppKit
 				@echo "Linked into executable \033[0;32m$(NAME)\033[0m."
 
 $(LIBFT_A):

@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:49:07 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 16:13:48 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/25 18:43:26 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ static int	get_player(t_vi2d *player, char **array)
 		i++;
 	}
 	if (count != 1)
-		return (error("Player issue in the file", NULL));
+		return (-1);
 	return (0);
 }
 
@@ -93,21 +93,22 @@ int	check_map(t_map *parsing, char **file)
 {
 	t_vi2d	player;
 	char	**dup;
-	int		i;
 	int		mapbeg;
 
 	mapbeg = 0;
-	i = 0;
 	parsing->height = get_height(&mapbeg, file);
 	if (check_char(file, mapbeg))
-		return (-1);
+		return (error("Forbidden char in map", NULL));
 	if (fill_array(file, parsing, mapbeg))
 		return (-1);
 	dup = dup_map(parsing->array, parsing->height);
 	if (!dup)
 		return (-1);
 	if (get_player(&player, dup))
-		return_split_free(dup);
+	{
+		free_split(dup);
+		return (error("Player issue in the file", NULL));
+	}
 	if (check_open_wall(dup, player.y, player.x))
 	{
 		free_split(dup);
