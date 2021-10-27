@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 10:44:52 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/26 14:58:45 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/27 10:35:41 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ void	pixel_minimap(t_cub3d *env, int x, int y, int tile)
 	int		j;
 	t_vd2d	pt;
 
-	i = 0;
-	while (i++ < tile)
+	i = -1;
+	while (++i < tile)
 	{
-		j = 0;
-		while (j++ < tile)
+		j = -1;
+		while (++j < tile)
 		{
 			pt.x = x + (i * (1.0 / tile));
 			pt.y = y + (j * (1.0 / tile));
