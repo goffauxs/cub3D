@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:14:09 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 18:42:28 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/27 12:05:02 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,9 @@
 int	get_height(int *mapbeg, char **file)
 {
 	int		i;
-	int		height;
 	char	*trim;
 
 	i = 0;
-	height = 0;
 	while (file && file[i])
 	{
 		trim = ft_strtrim(file[i], "\t ");
@@ -27,18 +25,19 @@ int	get_height(int *mapbeg, char **file)
 			|| !ft_strncmp(trim, "WE", 2) || !ft_strncmp(trim, "EA", 2)
 			|| !ft_strncmp(trim, "F", 1) || !ft_strncmp(trim, "C", 1)
 			|| !ft_strncmp(trim, "\n", 1) || !trim[0])
+			(*mapbeg) = i;
+		else
 		{
-			i++;
-			if (height == 0)
-				(*mapbeg) = i;
 			free(trim);
-			continue ;
+			break ;
 		}
 		free(trim);
-		height++;
 		i++;
 	}
-	return (height);
+	i = ++(*mapbeg);
+	while (file && file[i])
+		i++;
+	return (i - *mapbeg);
 }
 
 int	check_char(char **file, int mapbeg)
@@ -67,17 +66,20 @@ int	get_max_len(char **file, int mapbeg)
 {
 	int	ret;
 	int	i;
+	int	j;
 
 	ret = 0;
 	while (file && file[mapbeg])
 	{
 		i = 0;
-		while (file[mapbeg][i])
+		j = 0;
+		while (file[mapbeg][j])
 		{
-			if (file[mapbeg][i] == '\t')
+			if (file[mapbeg][j] == '\t')
 				i += 4;
 			else
 				i++;
+			j++;
 		}
 		if (i > ret)
 			ret = i;
