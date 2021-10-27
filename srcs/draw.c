@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 15:07:58 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/26 15:28:47 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/26 15:42:02 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ static void	draw_mapped_texture(t_cub3d *env, double angle, t_ray *r, int k)
 	step = env->texture[tex_idx].height / (double)r->line_len;
 	while (j < (int)(HEIGHT / 2.0 + (r->line_len / 2.0)))
 	{
-		if (j < HEIGHT && j > 0)
+		if (j <= HEIGHT && j >= 0)
 			ft_put_pixel(env, k, j, ft_get_pixel(&env->texture[tex_idx],
 					col, (int)i));
 		j++;

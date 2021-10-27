@@ -1,16 +1,16 @@
-F 124,142,45
-C 		12,220	,125
+C 172,21,237
+F 		204,237	,57
 
-NO 				./textures/purplestone.xpm
-			SO ./textures/purplestone.xpm
-WE ./textures/greystone.xpm
-EA ./textures/greystone.xpm
+NO 				./textures/mossy.xpm
+			SO ./textures/mossy.xpm
+WE ./textures/mossy.xpm
+EA ./textures/mossy.xpm
 
 1111111111
 1000000001
 1111000001
-1000000001
+100000N001
 1000001001
-101W001011
+1010001011
 1000010101
 1111111111
