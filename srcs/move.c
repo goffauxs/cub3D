@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 10:28:16 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/26 14:59:56 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/27 10:20:41 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,62 +15,78 @@
 void	move_left(t_cub3d *env)
 {
 	t_ray	r;
-	double	x_comp;
-	double	y_comp;
+	double	straight;
+	t_vd2d	len;
 	double	angle;
+	t_vd2d	comp;
 
 	angle = bound_angle(env->player.angle - (M_PI / 2.0));
-	x_comp = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
-	y_comp = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
-	if (x_comp > MOVE_SPEED * 5.0)
+	len.x = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
+	len.y = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
+	straight = get_ray_len(env, angle, &r);
+	comp.x = ft_abs(cos(angle)) * straight;
+	comp.y = ft_abs(sin(angle)) * straight;
+	if (len.x > MOVE_SPEED * 5.0 && (!r.vertical || comp.x > MOVE_SPEED * 5.0))
 		env->player.pos.x += cos(angle) * MOVE_SPEED;
-	if (y_comp > MOVE_SPEED * 5.0)
+	if (len.y > MOVE_SPEED * 5.0 && (r.vertical || comp.y > MOVE_SPEED * 5.0))
 		env->player.pos.y += sin(angle) * MOVE_SPEED;
 }
 
 void	move_right(t_cub3d *env)
 {
 	t_ray	r;
-	double	x_comp;
-	double	y_comp;
 	double	angle;
+	double	straight;
+	t_vd2d	len;
+	t_vd2d	comp;
 
 	angle = bound_angle(env->player.angle + (M_PI / 2.0));
-	x_comp = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
-	y_comp = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
-	if (x_comp > MOVE_SPEED * 5.0)
+	len.x = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
+	len.y = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
+	straight = get_ray_len(env, angle, &r);
+	comp.x = ft_abs(cos(angle)) * straight;
+	comp.y = ft_abs(sin(angle)) * straight;
+	if (len.x > MOVE_SPEED * 5.0 && (!r.vertical || comp.x > MOVE_SPEED * 5.0))
 		env->player.pos.x += cos(angle) * MOVE_SPEED;
-	if (y_comp > MOVE_SPEED * 5.0)
+	if (len.y > MOVE_SPEED * 5.0 && (r.vertical || comp.y > MOVE_SPEED * 5.0))
 		env->player.pos.y += sin(angle) * MOVE_SPEED;
 }
 
 void	move_forward(t_cub3d *env)
 {
 	t_ray	r;
-	double	x_comp;
-	double	y_comp;
+	double	straight;
+	t_vd2d	len;
+	t_vd2d	comp;
 
-	x_comp = get_ray_len(env, (cos(env->player.angle) < 0) * M_PI, &r);
-	y_comp = get_ray_len(env,
+	len.x = get_ray_len(env, (cos(env->player.angle) < 0) * M_PI, &r);
+	len.y = get_ray_len(env,
 			(sin(env->player.angle) < 0) * M_PI + (M_PI / 2.0), &r);
-	if (x_comp > MOVE_SPEED * 5.0)
+	straight = get_ray_len(env, env->player.angle, &r);
+	comp.x = ft_abs(cos(env->player.angle)) * straight;
+	comp.y = ft_abs(sin(env->player.angle)) * straight;
+	if (len.x > MOVE_SPEED * 5.0 && (!r.vertical || comp.x > MOVE_SPEED * 5.0))
 		env->player.pos.x += env->player.delta.x * MOVE_SPEED;
-	if (y_comp > MOVE_SPEED * 5.0)
+	if (len.y > MOVE_SPEED * 5.0 && (r.vertical || comp.y > MOVE_SPEED * 5.0))
 		env->player.pos.y += env->player.delta.y * MOVE_SPEED;
 }
 
 void	move_backward(t_cub3d *env)
 {
 	t_ray	r;
-	double	x_comp;
-	double	y_comp;
 	double	angle;
+	double	straight;
+	t_vd2d	len;
+	t_vd2d	comp;
 
 	angle = bound_angle(env->player.angle + M_PI);
-	x_comp = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
-	y_comp = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
-	if (x_comp > MOVE_SPEED * 5.0)
+	len.x = get_ray_len(env, (cos(angle) < 0) * M_PI, &r);
+	len.y = get_ray_len(env, (sin(angle) < 0) * M_PI + (M_PI / 2.0), &r);
+	straight = get_ray_len(env, env->player.angle, &r);
+	comp.x = ft_abs(cos(env->player.angle)) * straight;
+	comp.y = ft_abs(sin(env->player.angle)) * straight;
+	if (len.x > MOVE_SPEED * 5.0 && (!r.vertical || comp.x > MOVE_SPEED * 5.0))
 		env->player.pos.x -= env->player.delta.x * MOVE_SPEED;
-	if (y_comp > MOVE_SPEED * 5.0)
+	if (len.y > MOVE_SPEED * 5.0 && (r.vertical || comp.y > MOVE_SPEED * 5.0))
 		env->player.pos.y -= env->player.delta.y * MOVE_SPEED;
 }
