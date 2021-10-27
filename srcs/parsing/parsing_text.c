@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_text.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:49:07 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 18:07:07 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/27 10:31:08 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ int	error_textures(t_map *parsing, int j)
 {
 	int		i;
 	int		fd;
-	char	*line;
 
 	if (!parsing->tex_path[NORTH] || !parsing->tex_path[SOUTH]
 		|| !parsing->tex_path[WEST] || !parsing->tex_path[EAST] || j != 4)
@@ -45,11 +44,6 @@ int	error_textures(t_map *parsing, int j)
 		fd = open(parsing->tex_path[i], O_RDONLY);
 		if (fd == -1)
 			return (error("Error: wrong texture path", NULL));
-		if (! get_next_line(fd, &line))
-		{
-			free(line);
-			return (error("Error: empty xpm file", NULL));
-		}
 		close(fd);
 		i++;
 	}
