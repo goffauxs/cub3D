@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
+/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/27 13:39:00 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:33:09 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 # include <stdio.h>
-# include <unistd.h>
 # include <fcntl.h>
 # include <stdlib.h>
 # include <errno.h>
@@ -21,7 +20,6 @@
 # include "mlx.h"
 # include "libft.h"
 # include "get_next_line.h"
-# include <time.h>
 
 # ifndef WIDTH
 #  define WIDTH 1280

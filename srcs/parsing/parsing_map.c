@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:49:07 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 18:43:26 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:25:28 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,23 @@ int	check_map(t_map *parsing, char **file)
 		free_split(dup);
 		return (error("Player issue in the file", NULL));
 	}
-	if (check_open_wall(dup, player.y, player.x))
+	int	i;
+	int	j;
+
+	i = 0;
+	while (dup[i])
 	{
-		free_split(dup);
-		return (error("Open walls", NULL));
+		j = 0;
+		while (dup[i][j])
+		{
+			if (dup[i][j] == '0' && check_open_wall(dup, i, j))
+			{
+				free_split(dup);
+				return (error("Open walls", NULL));
+			}
+			j++;
+		}
+		i++;
 	}
 	free_split(dup);
 	return (0);

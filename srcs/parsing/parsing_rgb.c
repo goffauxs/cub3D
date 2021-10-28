@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:23:38 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/25 16:25:13 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:19:32 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,20 +75,20 @@ int	check_floor(t_map *parsing, char **file)
 	while (file && file[i])
 	{
 		trim = ft_strtrim(file[i], " \t");
-		if (!ft_strncmp(trim, "F", 1))
+		if (!ft_strncmp(trim, "F ", 2))
 		{
 			if (check_rgb(&count, trim, parsing, "F \t"))
-				return (error("Error: wrong RGB formatting", trim));
+				return (error("Wrong RGB formatting", trim));
 		}
-		if (!ft_strncmp(trim, "C", 1))
+		if (!ft_strncmp(trim, "C ", 2))
 		{
 			if (check_rgb(&count, trim, parsing, "C \t"))
-				return (error("Error: wrong RGB formatting", trim));
+				return (error("Wrong RGB formatting", trim));
 		}
 		free(trim);
 		i++;
 	}
 	if (count != 2)
-		return (error("Error: wrong number of colors", NULL));
+		return (error("Wrong number of colors", NULL));
 	return (0);
 }

@@ -6,15 +6,15 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 15:04:15 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/26 15:28:23 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/28 17:38:03 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
 
-void	ft_return_error(const char *err_msg, int system)
+void	ft_return_error(const char *err_msg, int systeme)
 {
-	if (!system)
+	if (!systeme)
 		ft_putendl_fd(err_msg, STDERR_FILENO);
 	else
 		perror(err_msg);
@@ -46,10 +46,10 @@ void	xpm_to_image(t_cub3d *env)
 	{
 		env->texture[i].img = mlx_xpm_file_to_image(env->mlx,
 				env->map->tex_path[i], &env->texture[i].width,
-				&env->texture[i].height);
+				&env->texture[i].height);	
 		if (!env->texture[i].img)
 		{
-			ft_putendl_fd("Error: xpm file issue", 2);
+			ft_putendl_fd("Error\nXpm file issue", 2);
 			exit(0);
 		}
 		env->texture[i].data_addr = mlx_get_data_addr(env->texture[i].img,
