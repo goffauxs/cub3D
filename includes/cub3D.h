@@ -6,7 +6,7 @@
 /*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/26 15:00:43 by sgoffaux         ###   ########.fr       */
+/*   Updated: 2021/10/27 13:39:00 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ typedef struct s_ray
 typedef struct s_player
 {
 	t_vd2d	pos;
-	t_vd2d	delta;
 	float	angle;
 }				t_player;
 
@@ -138,6 +137,8 @@ typedef struct s_cub3d
 	t_player	player;
 	t_keys		keys;
 	t_text		*texture;
+	int			prev_x;
+	int			mouse_down;
 }				t_cub3d;
 
 /*
@@ -173,6 +174,9 @@ void	ft_draw(t_cub3d *env);
 int		close_win(void *param);
 void	look_left(t_cub3d *env);
 void	look_right(t_cub3d *env);
+int		mouse_down(int button, int x, int y, void *param);
+int		mouse_up(int button, int x, int y, void *param);
+int		mouse_move(int x, int y, void *param);
 double	get_ray_len(t_cub3d *env, double angle, t_ray *r);
 double	ft_abs(double a);
 double	bound_angle(double angle);

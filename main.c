@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sgoffaux <sgoffaux@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:07 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/25 16:02:34 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/27 13:38:53 by sgoffaux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ static void	ft_player_pos(t_map *map, t_cub3d *env)
 				env->player.pos.x = x + 0.5;
 				env->player.pos.y = y + 0.5;
 				player_angle(map, env, x, y);
-				env->player.delta.x = cos(env->player.angle);
-				env->player.delta.y = sin(env->player.angle);
 				break ;
 			}
 			x++;
@@ -87,8 +85,12 @@ int	main(int argc, char **argv)
 	mlx_hook(env.win, 17, 1L << 17, close_win, NULL);
 	mlx_hook(env.win, 2, 1L << 0, key_down, &env);
 	mlx_hook(env.win, 3, 1L << 1, key_up, &env);
+	mlx_hook(env.win, 4, 1L << 2, mouse_down, &env);
+	mlx_hook(env.win, 5, 1L << 3, mouse_up, &env);
+	mlx_hook(env.win, 6, 0, mouse_move, &env);
 	ft_player_pos(&map, &env);
 	ft_bzero(&env.keys, sizeof(t_keys));
+	env.prev_x = 0;
 	mlx_loop_hook(env.mlx, on_update, &env);
 	mlx_loop(env.mlx);
 	free(env.texture);
