@@ -6,7 +6,7 @@
 #    By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/13 14:31:55 by sgoffaux          #+#    #+#              #
-#    Updated: 2021/10/26 14:33:26 by mdeclerf         ###   ########.fr        #
+#    Updated: 2021/10/29 15:51:07 by mdeclerf         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,6 +47,7 @@ SRCS		=	main.c \
 				$(DIR_PARSING)parsing_rgb.c \
 				$(DIR_PARSING)parsing_text.c \
 				$(DIR_PARSING)parsing_utils.c \
+				$(DIR_PARSING)parsing_map_utils2.c \
 
 OBJS		=	$(SRCS:%.c=%.o)
 

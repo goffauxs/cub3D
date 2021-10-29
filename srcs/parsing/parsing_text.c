@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:49:07 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/28 17:31:01 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/29 14:35:46 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,29 +56,23 @@ int	check_textures(t_map *parsing, char **file)
 	int		j;
 	char	*trim;
 
-	i = 0;
+	i = -1;
 	j = 0;
-	while (file && file[i])
+	while (file && file[++i])
 	{
 		trim = ft_strtrim(file[i], " \t");
 		if (!ft_strncmp(trim, "NO ", 3) || !ft_strncmp(trim, "SO", 2)
 			|| !ft_strncmp(trim, "WE ", 3) || !ft_strncmp(trim, "EA", 2))
 			j++;
-		if (j > 4)
-		{
-			free(trim);
-			break ;
-		}
-		if (!ft_strncmp(trim, "NO ", 3))
+		if (!ft_strncmp(trim, "NO ", 3) && !parsing->tex_path[NORTH])
 			parsing->tex_path[NORTH] = ft_strtrim(trim, "NO \t");
-		else if (!ft_strncmp(trim, "SO ", 3))
+		else if (!ft_strncmp(trim, "SO ", 3) && !parsing->tex_path[SOUTH])
 			parsing->tex_path[SOUTH] = ft_strtrim(trim, "SO \t");
-		else if (!ft_strncmp(trim, "WE ", 3))
+		else if (!ft_strncmp(trim, "WE ", 3) && !parsing->tex_path[WEST])
 			parsing->tex_path[WEST] = ft_strtrim(trim, "WE \t");
-		else if (!ft_strncmp(trim, "EA ", 3))
+		else if (!ft_strncmp(trim, "EA ", 3) && !parsing->tex_path[EAST])
 			parsing->tex_path[EAST] = ft_strtrim(trim, "EA \t");
 		free(trim);
-		i++;
 	}
 	if (error_textures(parsing, j))
 		return (-1);

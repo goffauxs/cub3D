@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:49:07 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/28 17:25:28 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/29 15:50:25 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,17 @@ static int	fill_array(char **file, t_map *parsing, int mapbeg)
 	parsing->width = get_max_len(file, mapbeg);
 	if (parsing_allocation(parsing))
 		return (-1);
-	while (file && file[mapbeg] && file[mapbeg][0])
+	while (file && file[mapbeg])
 	{
 		replace_space(j, parsing, file[mapbeg]);
 		mapbeg++;
 		j++;
 	}
+	replace_void(parsing);
 	return (0);
 }
 
-static int	check_open_wall(char **array, int y, int x)
+int	check_open_wall(char **array, int y, int x)
 {
 	if (y < 0 || x < 0 || !array[y] || (array[y] && !array[y][x]))
 		return (1);
@@ -40,24 +41,6 @@ static int	check_open_wall(char **array, int y, int x)
 		+ check_open_wall(array, y + 1, x)
 		+ check_open_wall(array, y, x - 1)
 		+ check_open_wall(array, y, x + 1));
-}
-
-static char	**dup_map(char **array, int height)
-{
-	char	**tmp;
-	int		z;
-
-	tmp = malloc(sizeof(char *) * (height + 1));
-	if (!tmp)
-		return (NULL);
-	z = 0;
-	while (z < height)
-	{
-		tmp[z] = ft_strdup(array[z]);
-		z++;
-	}
-	tmp[z] = NULL;
-	return (tmp);
 }
 
 static int	get_player(t_vi2d *player, char **array)
@@ -89,26 +72,8 @@ static int	get_player(t_vi2d *player, char **array)
 	return (0);
 }
 
-int	check_map(t_map *parsing, char **file)
+int	loop_open_walls(char **dup)
 {
-	t_vi2d	player;
-	char	**dup;
-	int		mapbeg;
-
-	mapbeg = 0;
-	parsing->height = get_height(&mapbeg, file);
-	if (check_char(file, mapbeg))
-		return (error("Forbidden char in map", NULL));
-	if (fill_array(file, parsing, mapbeg))
-		return (-1);
-	dup = dup_map(parsing->array, parsing->height);
-	if (!dup)
-		return (-1);
-	if (get_player(&player, dup))
-	{
-		free_split(dup);
-		return (error("Player issue in the file", NULL));
-	}
 	int	i;
 	int	j;
 
@@ -121,12 +86,39 @@ int	check_map(t_map *parsing, char **file)
 			if (dup[i][j] == '0' && check_open_wall(dup, i, j))
 			{
 				free_split(dup);
-				return (error("Open walls", NULL));
+				return (-1);
 			}
 			j++;
 		}
 		i++;
 	}
 	free_split(dup);
+	return (0);
+}
+
+int	check_map(t_map *parsing, char **file)
+{
+	t_vi2d	player;
+	char	**dup;
+	int		mapbeg;
+
+	mapbeg = 0;
+	parsing->height = get_height(&mapbeg, file);
+	if (check_char(file, mapbeg))
+	{
+		return (error("Forbidden char in map", NULL));
+	}
+	if (fill_array(file, parsing, mapbeg))
+		return (-1);
+	dup = dup_map(parsing->array, parsing->height);
+	if (!dup)
+		return (-1);
+	if (get_player(&player, dup))
+	{
+		free_split(dup);
+		return (error("Player issue in the file", NULL));
+	}
+	if (loop_open_walls(dup))
+		return (error("Open walls", NULL));
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 14:23:53 by sgoffaux          #+#    #+#             */
-/*   Updated: 2021/10/28 17:33:09 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/29 15:57:43 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define CUB3D_H
 # include <stdio.h>
 # include <fcntl.h>
-# include <stdlib.h>
 # include <errno.h>
 # include <math.h>
 # include "mlx.h"
@@ -158,6 +157,9 @@ char	**dup_cub(char **argv, char **ret);
 void	free_split(char **split);
 int		error(char *msg, char *free_ptr);
 int		return_split_free(char **split);
+int		check_open_wall(char **array, int y, int x);
+char	**dup_map(char **array, int height);
+void	replace_void(t_map *parsing);
 
 void	ft_return_error(const char *err_msg, int system);
 int		ft_check_valid(char *filename, t_map *map);

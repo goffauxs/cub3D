@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 16:14:09 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/27 11:58:01 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/29 15:50:44 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ int	get_height(int *mapbeg, char **file)
 	while (file && file[i])
 	{
 		trim = ft_strtrim(file[i], "\t ");
-		if (!ft_strncmp(trim, "NO", 2) || !ft_strncmp(trim, "SO", 2)
-			|| !ft_strncmp(trim, "WE", 2) || !ft_strncmp(trim, "EA", 2)
-			|| !ft_strncmp(trim, "F", 1) || !ft_strncmp(trim, "C", 1)
+		if (!ft_strncmp(trim, "NO ", 3) || !ft_strncmp(trim, "SO ", 3)
+			|| !ft_strncmp(trim, "WE ", 3) || !ft_strncmp(trim, "EA ", 3)
+			|| !ft_strncmp(trim, "F ", 2) || !ft_strncmp(trim, "C ", 2)
 			|| !ft_strncmp(trim, "\n", 1) || !trim[0])
 			(*mapbeg) = i;
 		else
@@ -129,7 +129,7 @@ void	replace_space(int i, t_map *parsing, char *line)
 			parsing->array[i][++j] = ' ';
 			k++;
 		}
-		else if (line[k] == '\0' )
+		else if (line[k] == '\0')
 			parsing->array[i][j] = ' ';
 		else
 		{

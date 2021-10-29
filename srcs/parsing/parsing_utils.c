@@ -6,7 +6,7 @@
 /*   By: mdeclerf <mdeclerf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 10:07:59 by mdeclerf          #+#    #+#             */
-/*   Updated: 2021/10/28 17:19:13 by mdeclerf         ###   ########.fr       */
+/*   Updated: 2021/10/29 14:16:13 by mdeclerf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,22 @@ int	error(char *msg, char *free_ptr)
 	ft_putendl_fd("Error", 2);
 	ft_putendl_fd(msg, 2);
 	return (-1);
+}
+
+char	**dup_map(char **array, int height)
+{
+	char	**tmp;
+	int		z;
+
+	tmp = malloc(sizeof(char *) * (height + 1));
+	if (!tmp)
+		return (NULL);
+	z = 0;
+	while (z < height)
+	{
+		tmp[z] = ft_strdup(array[z]);
+		z++;
+	}
+	tmp[z] = NULL;
+	return (tmp);
 }
