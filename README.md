@@ -30,7 +30,7 @@ A minimap is displayed in the top left corner showing the player's position and 
 The program is compiled using `make all`
 
 ## Example usage
-The program can be run by passing it a .cub file as parameter (examples in `test_maps`).
+The program can be run by passing it a .cub file as parameter (examples in [maps](https://github.com/goffauxs/cub3D/tree/main/maps)).
 
 Here is a short demonstration of the program running.
 
